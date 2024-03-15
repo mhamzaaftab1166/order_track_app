@@ -6,6 +6,9 @@ import LoginScreen from "./screens/LoginScreen";
 import AddSalesman from "./screens/AddSalesman";
 import AddProduct from "./screens/AddProduct";
 import DepartmentScreen from "./screens/DepartmentScreen";
+import Category from "./screens/Categories";
+import SelectCategory from "./screens/SelectCategories";
+import ProductList from "./screens/ProductList";
 
 export default function App() {
   return (
@@ -20,6 +23,12 @@ export default function App() {
     // <AddProduct />
 
     // <DepartmentScreen />
+
+    // <Category />
+
+    // <SelectCategory />
+
+    // <ProductList />
   );
 }
 

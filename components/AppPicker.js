@@ -83,12 +83,13 @@ function AppPicker({
 }
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: defaultStyles.colors.light,
+    backgroundColor: defaultStyles.colors.white,
     borderRadius: 14,
     flexDirection: "row",
     padding: 15,
     marginVertical: 10,
     alignItems: "center",
+    borderWidth: 0.5,
   },
   icon: {
     marginRight: 10,

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SafeScreen from "../components/SafeScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -7,7 +7,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   return (
     <SafeScreen style={styles.background}>
       <View style={styles.container}>
@@ -98,7 +98,8 @@ const ProfileScreen = () => {
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <View
+            <TouchableOpacity
+              onPress={() => navigation.navigate("addsaleman")}
               style={{
                 width: 100,
                 height: 90,
@@ -112,8 +113,9 @@ const ProfileScreen = () => {
             >
               <MaterialIcons name="man" size={30} color="#fc5c65" />
               <Text>Add Salesman</Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("addproduct")}
               style={{
                 width: 100,
                 height: 90,
@@ -131,7 +133,7 @@ const ProfileScreen = () => {
                 color="#fc5c65"
               />
               <Text>Add Product</Text>
-            </View>
+            </TouchableOpacity>
             <View
               style={{
                 width: 100,

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import * as Yup from "yup";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppFormField from "../components/forms/AppFormField";
 import SubmitButton from "../components/forms/SubmitButton";
 import AppForm from "../components/forms/AppForm";
@@ -11,22 +10,25 @@ import AppText from "../components/AppText";
 import AppFormPicker from "../components/forms/AppFormPicker";
 
 const validationSchema = Yup.object().shape({
-  Name: Yup.string().required().label("Name"),
-  category: Yup.string().required().label("Category"),
-  Price: Yup.number().required().positive().label("Price"),
-  Department: Yup.string().required().label("Department"),
-  ID: Yup.string().required().label("Product ID"),
-  Size: Yup.string().required().label("Size"),
-  Color: Yup.string().required().label("Color"),
+  name: Yup.string().required().label("Name"),
+  category: Yup.object().required().label("Category"),
+  price: Yup.number().required().positive().label("Price"),
+  sizes: Yup.object().shape({
+    small: Yup.number().required().positive().label("Small"),
+    medium: Yup.number().required().positive().label("Medium"),
+    large: Yup.number().required().positive().label("Large"),
+  }),
+  color: Yup.string().required().label("Color"),
+  imageUrl: Yup.string().required().label("Image URL"),
 });
 
 function AddProduct({ navigation }) {
   const [error, setError] = useState();
   const [errorVisible, setErrorVisible] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (info) => {
-    console.log(info);
+  const handleSubmit = async (productData) => {
+    console.log(productData);
+    // Send productData to backend API endpoint for creating a product
   };
 
   return (
@@ -41,20 +43,19 @@ function AddProduct({ navigation }) {
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{
-              Name: "",
+              name: "",
               category: "",
-              Price: "",
-              Department: "",
-              ID: "",
-              Size: "",
-              Color: "",
+              price: "",
+              sizes: { small: "", medium: "", large: "" },
+              color: "",
+              imageUrl: "",
             }}
             onSubmit={handleSubmit}
             validationSchema={validationSchema}
           >
             <AppErrorMessage error={error} visible={errorVisible} />
             <AppFormField
-              name={"Name"}
+              name="name"
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Enter name"
@@ -69,36 +70,42 @@ function AddProduct({ navigation }) {
               width={"98%"}
             />
             <AppFormField
-              name={"Price"}
+              name="price"
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Price"
             />
             <AppFormField
-              name={"Department"}
+              name="sizes.small"
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="Select a department"
+              placeholder="Small Quantity"
             />
             <AppFormField
-              name={"ID"}
+              name="sizes.medium"
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="Enter product ID"
+              placeholder="Medium Quantity"
             />
             <AppFormField
-              name={"Size"}
+              name="sizes.large"
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="Size"
+              placeholder="Large Quantity"
             />
             <AppFormField
-              name={"Color"}
+              name="color"
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Color"
             />
-            <SubmitButton title={"Upload an image"} />
+            <AppFormField
+              name="imageUrl"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="Image URL"
+            />
+            <SubmitButton title="Submit" />
           </AppForm>
         </View>
       </View>
@@ -131,15 +138,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: 5,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 3,
   },
 });
 

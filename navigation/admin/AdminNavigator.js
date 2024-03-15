@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScreen from "../../screens/HomeScreen";
 import ChatScreen from "../../screens/ChatScreen";
 import ProfileScreen from "../../screens/ProfileScreen";
+import ProfileNavigator from "./ProfileNavigator";
 
 const Tab = createBottomTabNavigator();
 const AdminNavigator = () => {
@@ -49,7 +50,7 @@ const AdminNavigator = () => {
           ),
         }}
         name="profile"
-        component={ProfileScreen}
+        component={ProfileNavigator}
       />
     </Tab.Navigator>
   );
