@@ -8,12 +8,13 @@ import AppForm from "../components/forms/AppForm";
 import AppErrorMessage from "../components/forms/AppErrorMessage";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
+import { saveSalesman } from "../utilty/salesmanUtility";
 
 const validationSchema = Yup.object().shape({
-  Name: Yup.string().required().label("Name"),
-  Cnic: Yup.string().required().label("CNIC"),
-  Phone: Yup.string().required().label("Phone"),
-  Address: Yup.string().required().label("Address"),
+  name: Yup.string().required().label("Name"),
+  cnic: Yup.string().required().label("CNIC"),
+  phone: Yup.string().required().label("Phone"),
+  email: Yup.string().required().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
 });
 
@@ -23,7 +24,15 @@ function AddSalesman({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (info) => {
-    console.log(info);
+    try {
+      await saveSalesman(info);
+      navigation.navigate("profiles");
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data);
+        setErrorVisible(true);
+      }
+    }
   };
 
   return (
@@ -38,39 +47,39 @@ function AddSalesman({ navigation }) {
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{
-              Name: "",
-              Cnic: "",
-              Phone: "",
-              Address: "",
+              name: "",
+              cnic: "",
+              phone: "",
+              email: "",
               password: "",
             }}
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit} // Make sure handleSubmit is passed here
             validationSchema={validationSchema}
           >
             <AppErrorMessage error={error} visible={errorVisible} />
             <AppFormField
-              name={"Name"}
+              name={"name"}
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Enter name"
             />
             <AppFormField
-              name={"Cnic"}
+              name={"cnic"}
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="CNIC"
             />
             <AppFormField
-              name={"Phone"}
+              name={"phone"}
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Enter phone"
             />
             <AppFormField
-              name={"Address"}
+              name={"email"}
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="Enter address"
+              placeholder="Enter email address"
             />
             <View style={styles.passwordContainer}>
               <View style={{ flex: 1 }}>

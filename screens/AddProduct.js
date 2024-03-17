@@ -16,6 +16,7 @@ import AppText from "../components/AppText";
 import AppFormPicker from "../components/forms/AppFormPicker";
 import AppFormImagePicker from "../components/forms/AppFormImagePicker";
 import SafeScreen from "../components/SafeScreen";
+import { saveProduct } from "../utilty/ProductUtility";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -51,29 +52,32 @@ function AddProduct({ navigation }) {
     setColorFields(updatedColorFields);
   };
 
-  const handleRemoveColorField = (index) => {
+  const handleRemoveColorField = async (index) => {
     const updatedColorFields = [...colorFields];
     updatedColorFields.splice(index, 1);
     setColorFields(updatedColorFields);
   };
 
   const handleSubmit = async (productData) => {
-    // Transform productData to match backend schema
-    const transformedData = {
-      name: productData.name,
-      category: productData.category.label, // Assuming you want the label here
-      price: parseFloat(productData.price), // Ensure price is converted to a number
-      sizes: {
-        small: parseInt(productData.sizes.small),
-        medium: parseInt(productData.sizes.medium),
-        large: parseInt(productData.sizes.large),
-      },
-      color: colorFields.map((colorField) => colorField.value),
-      imageUrl: productData.imageUrl,
-      description: productData.description,
-    };
-
-    console.log(transformedData);
+    try {
+      const transformedData = {
+        name: productData.name,
+        category: productData.category.label, // Assuming you want the label here
+        price: parseFloat(productData.price), // Ensure price is converted to a number
+        sizes: {
+          small: parseInt(productData.sizes.small),
+          medium: parseInt(productData.sizes.medium),
+          large: parseInt(productData.sizes.large),
+        },
+        color: colorFields.map((colorField) => colorField.value),
+        imageUrl: productData.imageUrl,
+        description: productData.description,
+      };
+      await saveProduct(transformedData);
+      navigation.navigate("profiles");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
