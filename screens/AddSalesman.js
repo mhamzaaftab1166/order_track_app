@@ -18,15 +18,25 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required().min(4).label("Password"),
 });
 
-function AddSalesman({ navigation }) {
+function AddSalesman({ navigation, route }) {
   const [error, setError] = useState();
   const [errorVisible, setErrorVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const { salesman } = route.params;
+
   const handleSubmit = async (info) => {
     try {
+      if (salesman) {
+        // Include _id only if salesman exists
+        info._id = salesman._id;
+      }
       await saveSalesman(info);
-      navigation.navigate("profiles");
+      if (info._id) {
+        navigation.navigate("addedsalesman");
+      } else {
+        navigation.navigate("profiles");
+      }
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data);
@@ -47,11 +57,11 @@ function AddSalesman({ navigation }) {
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{
-              name: "",
-              cnic: "",
-              phone: "",
-              email: "",
-              password: "",
+              name: salesman ? salesman.name : "",
+              cnic: salesman ? salesman.cnic : "",
+              phone: salesman ? salesman.phone : "",
+              email: salesman ? salesman.email : "",
+              password: salesman ? salesman.password : "",
             }}
             onSubmit={handleSubmit} // Make sure handleSubmit is passed here
             validationSchema={validationSchema}

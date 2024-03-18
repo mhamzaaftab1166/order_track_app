@@ -74,7 +74,8 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
               </View>
               <View style={styles.row}>
-                <View
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("addedsalesman")}
                   style={{
                     backgroundColor: "#00BFFF",
                     height: 145,
@@ -88,7 +89,7 @@ const ProfileScreen = ({ navigation }) => {
                 >
                   <Text style={styles.text1}>Manage Salesman</Text>
                   <AntDesign name="arrowright" size={20} color="white" />
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -99,7 +100,9 @@ const ProfileScreen = ({ navigation }) => {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <TouchableOpacity
-              onPress={() => navigation.navigate("addsaleman")}
+              onPress={() =>
+                navigation.navigate("addsaleman", { salesman: {} })
+              }
               style={{
                 width: 100,
                 height: 90,

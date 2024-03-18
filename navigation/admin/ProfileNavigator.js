@@ -5,6 +5,7 @@ import HomeScreen from "../../screens/HomeScreen";
 import AddSalesman from "../../screens/AddSalesman";
 import ProfileScreen from "../../screens/ProfileScreen";
 import AddProduct from "../../screens/AddProduct";
+import Addedalesman from "../../screens/Addedalesman";
 
 const ProfileNavigator = () => {
   return (
@@ -16,6 +17,7 @@ const ProfileNavigator = () => {
       <Stack.Screen name="profiles" component={ProfileScreen} />
       <Stack.Screen name="addsaleman" component={AddSalesman} />
       <Stack.Screen name="addproduct" component={AddProduct} />
+      <Stack.Screen name="addedsalesman" component={Addedalesman} />
     </Stack.Navigator>
   );
 };
