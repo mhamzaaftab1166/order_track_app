@@ -28,7 +28,7 @@ const AdminNavigator = () => {
           ),
         }}
         name="home"
-        component={HomeScreen}
+        component={ProfileNavigator}
       />
       <Tab.Screen
         options={{
@@ -50,7 +50,7 @@ const AdminNavigator = () => {
           ),
         }}
         name="profile"
-        component={ProfileNavigator}
+        component={HomeScreen}
       />
     </Tab.Navigator>
   );
