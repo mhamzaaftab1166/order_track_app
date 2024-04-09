@@ -172,21 +172,22 @@ const ProfileScreen = ({ navigation }) => {
                 />
                 <Text>Add Product</Text>
               </TouchableOpacity>
-              {/* <View
-              style={{
-                width: 100,
-                height: 90,
-                alignItems: "center",
-                marginVertical: 10,
-                backgroundColor: "#f8f4f4",
-                justifyContent: "space-around",
-                borderRadius: 10,
-                padding: 5,
-              }}
-            >
-              <MaterialIcons name="category" size={24} color="#fc5c65" />
-              <Text>Categories</Text>
-            </View> */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("allocation")}
+                style={{
+                  width: 100,
+                  height: 90,
+                  alignItems: "center",
+                  marginVertical: 10,
+                  backgroundColor: "#f8f4f4",
+                  justifyContent: "space-around",
+                  borderRadius: 10,
+                  padding: 5,
+                }}
+              >
+                <MaterialIcons name="category" size={24} color="#fc5c65" />
+                <Text>Manage Allocation</Text>
+              </TouchableOpacity>
             </View>
             <Text style={{ color: "black", fontSize: 18, fontWeight: "bold" }}>
               Sales Over Month

@@ -23,3 +23,7 @@ export function getSalesmans() {
 export function deleteSalesman(id) {
   return httpService.delete(salesmanUrl(id));
 }
+
+export function getSaleman(salesmanId) {
+  return httpService.get(apiEndpoint + `/${salesmanId}`);
+}
