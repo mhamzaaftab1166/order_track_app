@@ -158,7 +158,8 @@ const UserHomeScreen = ({ navigation }) => {
             color="#46EB8E"
           />
         </View>
-        <View
+        <TouchableOpacity
+          onPress={() => navigation.navigate("list")}
           style={{
             backgroundColor: colors.white,
             width: "40%",
@@ -187,7 +188,7 @@ const UserHomeScreen = ({ navigation }) => {
             size={40}
             color="black"
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <BarChart
         // style={graphStyle}
