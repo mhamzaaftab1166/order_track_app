@@ -11,6 +11,7 @@ import { Entypo } from "@expo/vector-icons";
 import { BarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width * 0.8;
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -38,6 +39,18 @@ const UserHomeScreen = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 40,
+          left: 20,
+          padding: 10,
+          zIndex: 1,
+        }}
+        onPress={() => navigation.navigate("cart")}
+      >
+        <FontAwesome5 name="shopping-cart" size={30} color={colors.primary} />
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.settingsButton}
         onPress={handleSettingsPress}

@@ -10,10 +10,12 @@ import {
 import { Slider } from "react-native-elements";
 import colors from "../../config/colors";
 import Icon from "react-native-vector-icons/Ionicons"; // Import Ionicons
+import { useCart } from "../../CartContext";
 
-const ProductListDetail = ({ route }) => {
+const ProductListDetail = ({ route, navigation }) => {
   const { product } = route.params;
-
+  const { addToCart, cartItems } = useCart();
+  console.log(cartItems);
   // Remove _id property from sizes
   const sizesArray = Object.keys(product.sizes)
     .filter((sizeName) => sizeName !== "_id")
@@ -47,12 +49,20 @@ const ProductListDetail = ({ route }) => {
 
   const handleAddToCart = () => {
     // Add logic to add the selected product to the cart
-    console.log("Added to cart:", {
+    addToCart({
       _id: product._id,
       selectedSize: sizesArray[selectedSizeIndex].size,
       selectedColor,
       quantity,
+      imageUrl: product.imageUrl[0],
+      name: product.name,
+      price: product.price,
     });
+    // Show alert
+    alert("Your Item added to cart sucessfully!");
+
+    // Navigate to the home screen
+    navigation.navigate("list");
   };
 
   const navigateNextImage = () => {

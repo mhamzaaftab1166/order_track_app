@@ -3,12 +3,15 @@ import { StyleSheet, Text, View } from "react-native";
 import AdminNavigator from "./navigation/admin/AdminNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import SalesmanNavigator from "./navigation/SalesmanNavigator";
+import { CartProvider } from "./CartContext";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <SalesmanNavigator />
-    </NavigationContainer>
+    <CartProvider>
+      <NavigationContainer>
+        <SalesmanNavigator />
+      </NavigationContainer>
+    </CartProvider>
 
     // <LoginScreen />
 
