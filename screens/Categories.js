@@ -108,9 +108,18 @@ function Category({ navigation }) {
               </TouchableOpacity>
               {expandedCategories[mainCategory] &&
                 subcategories.map((subcategory, subIndex) => (
-                  <View style={styles.categoryContainer} key={subIndex}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("addcat", {
+                        subcategory: subcategory.subCategory,
+                        categoryId: subcategory._id,
+                      })
+                    }
+                    style={styles.categoryContainer}
+                    key={subIndex}
+                  >
                     <AppText>{subcategory.subCategory}</AppText>
-                  </View>
+                  </TouchableOpacity>
                 ))}
             </View>
           )

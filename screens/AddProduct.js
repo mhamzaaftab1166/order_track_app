@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -17,10 +17,13 @@ import AppFormPicker from "../components/forms/AppFormPicker";
 import AppFormImagePicker from "../components/forms/AppFormImagePicker";
 import SafeScreen from "../components/SafeScreen";
 import { saveProduct } from "../utilty/ProductUtility";
+import { getDepartments } from "../utilty/deptUtility";
+import { getCategories } from "../utilty/catUtility";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
   category: Yup.object().required().label("Category"),
+  department: Yup.object().required().label("Department"),
   price: Yup.number().required().positive().label("Price"),
   sizes: Yup.object().shape({
     small: Yup.number().required().positive().label("Small"),
@@ -41,6 +44,23 @@ function AddProduct({ navigation }) {
   const [error, setError] = useState();
   const [errorVisible, setErrorVisible] = useState(false);
   const [colorFields, setColorFields] = useState([{ value: "" }]);
+  const [categories, setCategories] = useState([]);
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    const fetchCategoriesAndDepartments = async () => {
+      try {
+        const categoriesData = await getCategories();
+        const departmentsData = await getDepartments();
+        setCategories(categoriesData.data);
+        setDepartments(departmentsData.data);
+      } catch (error) {
+        console.error("Error fetching categories and departments:", error);
+      }
+    };
+
+    fetchCategoriesAndDepartments();
+  }, []);
 
   const handleAddColorField = () => {
     setColorFields([...colorFields, { value: "" }]);
@@ -62,8 +82,9 @@ function AddProduct({ navigation }) {
     try {
       const transformedData = {
         name: productData.name,
-        category: productData.category.label, // Assuming you want the label here
-        price: parseFloat(productData.price), // Ensure price is converted to a number
+        category: productData.category.value,
+        department: productData.department.value,
+        price: parseFloat(productData.price),
         sizes: {
           small: parseInt(productData.sizes.small),
           medium: parseInt(productData.sizes.medium),
@@ -76,7 +97,7 @@ function AddProduct({ navigation }) {
       await saveProduct(transformedData);
       navigation.navigate("profiles");
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
     }
   };
 
@@ -96,6 +117,7 @@ function AddProduct({ navigation }) {
                 initialValues={{
                   name: "",
                   category: "",
+                  department: "",
                   price: "",
                   sizes: { small: "", medium: "", large: "" },
                   color: "",
@@ -113,13 +135,22 @@ function AddProduct({ navigation }) {
                   placeholder="Enter name"
                 />
                 <AppFormPicker
-                  items={[
-                    { label: "clothing", value: 1 },
-                    { label: "apparel", value: 2 },
-                  ]}
-                  name={"category"}
+                  items={categories.map((cat) => ({
+                    label: `${cat.mainCategory} / ${cat.subCategory}`,
+                    value: cat._id,
+                  }))}
+                  name={"category"} // Change the name to match the field name
                   placeholder={"Category"}
-                  width={"98%"}
+                  width="98%"
+                />
+                <AppFormPicker
+                  items={departments.map((dept) => ({
+                    label: dept.name,
+                    value: dept._id,
+                  }))}
+                  name="department"
+                  placeholder="Department"
+                  width="98%"
                 />
                 <AppFormField
                   name="price"
@@ -149,7 +180,7 @@ function AddProduct({ navigation }) {
                   placeholder="Large Quantity"
                 />
                 <Text style={{ color: colors.medium, marginVertical: 5 }}>
-                  Add atleast one or more colors!
+                  Add at least one or more colors!
                 </Text>
                 {colorFields.map((colorField, index) => (
                   <View key={index}>
@@ -178,8 +209,8 @@ function AddProduct({ navigation }) {
                   maxLength={225}
                   multiline
                   numberOfLines={3}
-                  name={"description"}
-                  placeholder={"Decriptions"}
+                  name="description"
+                  placeholder="Descriptions"
                 />
                 <SubmitButton title="Submit" />
               </AppForm>
