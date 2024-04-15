@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import * as Yup from "yup";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppFormField from "../components/forms/AppFormField";
+import AppFormPicker from "../components/forms/AppFormPicker";
 import SubmitButton from "../components/forms/SubmitButton";
 import AppForm from "../components/forms/AppForm";
 import AppErrorMessage from "../components/forms/AppErrorMessage";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import { saveSalesman } from "../utilty/salesmanUtility";
+import { getDepartments } from "../utilty/deptUtility";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -16,14 +18,29 @@ const validationSchema = Yup.object().shape({
   phone: Yup.string().required().label("Phone"),
   email: Yup.string().required().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
+  department: Yup.object().required().label("Department"),
 });
 
 function AddSalesman({ navigation, route }) {
   const [error, setError] = useState();
   const [errorVisible, setErrorVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [departments, setDepartments] = useState([]);
 
   const { salesman } = route.params;
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const result = await getDepartments();
+        setDepartments(result.data);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleSubmit = async (info) => {
     try {
@@ -31,6 +48,8 @@ function AddSalesman({ navigation, route }) {
         // Include _id only if salesman exists
         info._id = salesman._id;
       }
+      info.department = info.department.value;
+      console.log(info);
       await saveSalesman(info);
       if (info._id) {
         navigation.navigate("addedsalesman");
@@ -62,6 +81,7 @@ function AddSalesman({ navigation, route }) {
               phone: salesman ? salesman.phone : "",
               email: salesman ? salesman.email : "",
               password: salesman ? salesman.password : "",
+              department: null,
             }}
             onSubmit={handleSubmit} // Make sure handleSubmit is passed here
             validationSchema={validationSchema}
@@ -113,6 +133,14 @@ function AddSalesman({ navigation, route }) {
                 />
               </TouchableOpacity>
             </View>
+            <AppFormPicker
+              items={departments.map((dept) => ({
+                label: dept.name,
+                value: dept._id,
+              }))}
+              name={"department"} // Change the name to match the field name
+              placeholder={"Select Department"}
+            />
             <SubmitButton title={"Done"} />
           </AppForm>
         </View>

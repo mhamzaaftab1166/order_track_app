@@ -1,12 +1,45 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, ScrollView, Alert } from "react-native";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import SafeScreen from "../components/SafeScreen";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
+import { saveCategory } from "../utilty/catUtility";
 
-function SelectCategory() {
+function SelectCategory({ navigation }) {
+  const [level1Category, setLevel1Category] = useState("");
+  const [level2Category, setLevel2Category] = useState("");
+  const [isEmptyError, setIsEmptyError] = useState(false);
+
+  const handleSubmit = async () => {
+    if (level1Category && level2Category) {
+      const category = {
+        mainCategory: level1Category,
+        subCategory: level2Category,
+      };
+      console.log(category);
+      try {
+        await saveCategory(category);
+        // If successful, navigate to another screen or perform other actions
+        Alert.alert("Success", "Category saved successfully!");
+        navigation.navigate("categories");
+      } catch (error) {
+        if (error && error.response && error.response.status === 400) {
+          // Display the error message from the backend
+          Alert.alert("Error", error.response.data);
+        } else {
+          // Handle other types of errors
+          Alert.alert("Error", "Failed to save category. Please try again.");
+          console.error("Error saving category:", error);
+        }
+      }
+    } else {
+      setIsEmptyError(true);
+      Alert.alert("Error", "Please fill in both category fields.");
+    }
+  };
+
   return (
     <SafeScreen style={{ paddingTop: 50 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -19,18 +52,35 @@ function SelectCategory() {
           </View>
           <View style={{ marginVertical: 8 }}>
             <AppText style={{ fontSize: 18 }}>Category No. 1</AppText>
-            <AppTextInput placeholder={"Level 1 Category"} />
+            <AppTextInput
+              placeholder={"Level 1 Category"}
+              onChangeText={(text) => {
+                setLevel1Category(text);
+                setIsEmptyError(false);
+              }}
+            />
           </View>
           <View style={{ marginVertical: 8 }}>
             <AppText style={{ fontSize: 18 }}>Category No. 2</AppText>
-            <AppTextInput placeholder={"Level 2 Category"} />
-          </View>
-          <View style={{ marginVertical: 8 }}>
-            <AppText style={{ fontSize: 18 }}>Category No. 3</AppText>
-            <AppTextInput placeholder={"Level 3 Category"} />
+            <AppTextInput
+              placeholder={"Level 2 Category"}
+              onChangeText={(text) => {
+                setLevel2Category(text);
+                setIsEmptyError(false);
+              }}
+            />
           </View>
         </View>
-        <AppButton style={{ width: "80%" }} title={"Done"} />
+        {isEmptyError && (
+          <AppText style={styles.errorText}>
+            Please fill in both fields.
+          </AppText>
+        )}
+        <AppButton
+          style={{ width: "80%" }}
+          title={"Done"}
+          onPress={handleSubmit}
+        />
       </ScrollView>
     </SafeScreen>
   );
@@ -91,6 +141,11 @@ const styles = StyleSheet.create({
     color: colors.medium,
     fontSize: 16,
     textAlign: "center",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 

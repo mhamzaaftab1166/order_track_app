@@ -10,6 +10,9 @@ import AddedProducts from "../../screens/AddedProducts";
 import Dashboard from "../../screens/Dashboard";
 import Allocation from "../../screens/Allocation";
 import AllocateForm from "../../screens/AllocateForm";
+import DepartmentScreen from "../../screens/DepartmentScreen";
+import Category from "../../screens/Categories";
+import SelectCategory from "../../screens/SelectCategories";
 
 const ProfileNavigator = () => {
   return (
@@ -26,6 +29,9 @@ const ProfileNavigator = () => {
       <Stack.Screen name="dashboard" component={Dashboard} />
       <Stack.Screen name="allocation" component={Allocation} />
       <Stack.Screen name="allocationfrom" component={AllocateForm} />
+      <Stack.Screen name="department" component={DepartmentScreen} />
+      <Stack.Screen name="categories" component={Category} />
+      <Stack.Screen name="addcat" component={SelectCategory} />
     </Stack.Navigator>
   );
 };

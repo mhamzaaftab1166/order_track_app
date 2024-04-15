@@ -1,13 +1,49 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import SafeScreen from "../components/SafeScreen";
 import { AntDesign } from "@expo/vector-icons";
-import { Octicons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { getCategories } from "../utilty/catUtility";
 
-function Category() {
+function Category({ navigation }) {
+  const [categories, setCategories] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState({});
+
+  useEffect(() => {
+    // Fetch categories from the backend when the component mounts
+    const fetchCategories = async () => {
+      try {
+        const result = await getCategories();
+        setCategories(result.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Function to toggle the expansion of a main category
+  const toggleCategoryExpansion = (mainCategory) => {
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [mainCategory]: !prev[mainCategory],
+    }));
+  };
+
+  // Function to group categories by their main category
+  const groupCategoriesByMainCategory = () => {
+    const groupedCategories = {};
+    categories.forEach((category) => {
+      if (!groupedCategories[category.mainCategory]) {
+        groupedCategories[category.mainCategory] = [];
+      }
+      groupedCategories[category.mainCategory].push(category);
+    });
+    return groupedCategories;
+  };
+
   return (
     <SafeScreen style={{ paddingTop: 50 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -19,7 +55,10 @@ function Category() {
             </AppText>
           </View>
         </View>
-        <View style={styles.category}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("addcat")}
+          style={styles.category}
+        >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ flex: 1 }}>
               <AppText style={styles.categoryText}>
@@ -28,108 +67,65 @@ function Category() {
             </View>
             <AntDesign name="arrowright" size={22} color="white" />
           </View>
-        </View>
-
+        </TouchableOpacity>
         <View
           style={{
-            marginTop: 30,
+            marginTop: 15,
+            marginBottom: 10,
             alignSelf: "flex-start",
-            paddingHorizontal: 20,
+            paddingHorizontal: 10,
           }}
         >
           <AppText style={{ fontSize: 26, fontWeight: "bold" }}>
             Added Categories
           </AppText>
         </View>
-        <View style={{ width: "90%" }}>
-          <View
-            style={[
-              styles.cat,
-              {
-                flexDirection: "row",
-                justifyContent: "space-between",
-              },
-            ]}
-          >
-            <AppText
-              style={{
-                fontWeight: "bold",
-                color: colors.white,
-              }}
-            >
-              Category 1
-            </AppText>
-            <View style={{ flexDirection: "row", marginHorizontal: 4 }}>
-              <Feather
-                name="edit"
-                size={24}
-                color="black"
-                style={{ marginRight: 10 }}
-              />
-              <Octicons name="download" size={24} color="white" />
+        {Object.entries(groupCategoriesByMainCategory()).map(
+          ([mainCategory, subcategories], index) => (
+            <View key={index} style={styles.categorySection}>
+              <TouchableOpacity
+                onPress={() => toggleCategoryExpansion(mainCategory)}
+                style={styles.categoryHeader}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <AppText style={styles.categoryHeaderText}>
+                    {mainCategory}
+                  </AppText>
+                  <AntDesign
+                    name={
+                      expandedCategories[mainCategory] ? "arrowup" : "arrowdown"
+                    }
+                    size={22}
+                    color="white"
+                  />
+                </View>
+              </TouchableOpacity>
+              {expandedCategories[mainCategory] &&
+                subcategories.map((subcategory, subIndex) => (
+                  <View style={styles.categoryContainer} key={subIndex}>
+                    <AppText>{subcategory.subCategory}</AppText>
+                  </View>
+                ))}
             </View>
-          </View>
-          <View style={[styles.cat, { width: "80%", alignSelf: "flex-end" }]}>
-            <AppText style={{ fontWeight: "bold", color: colors.white }}>
-              Sub Category
-            </AppText>
-          </View>
-          <View style={[styles.cat, { width: "65%", alignSelf: "flex-end" }]}>
-            <AppText style={{ fontWeight: "bold", color: colors.white }}>
-              Further Category
-            </AppText>
-          </View>
-        </View>
-        <View style={{ marginVertical: 10 }}></View>
-        <View style={styles.categoryContainer}>
-          <AppText style={{ fontWeight: "bold" }}>Category 2</AppText>
-        </View>
-        <View style={styles.categoryContainer}>
-          <AppText style={{ fontWeight: "bold" }}>Category 3</AppText>
-        </View>
+          )
+        )}
       </ScrollView>
     </SafeScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  cat: {
-    backgroundColor: colors.primary,
-    width: "100%",
-    height: 50,
-    padding: 12,
-    borderRadius: 12,
-    justifyContent: "center",
-    marginVertical: 7,
-  },
-  categoryContainer: {
-    backgroundColor: colors.light,
-    width: "90%",
-    height: 50,
-    borderRadius: 10,
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: 10,
-    padding: 12,
-  },
   container: {
     flexGrow: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     paddingBottom: 20,
-  },
-  category: {
-    backgroundColor: colors.primary,
-    width: "85%",
-    height: 80,
-    borderRadius: 10,
-    justifyContent: "center",
-    padding: 12,
-    marginTop: 20,
-  },
-  categoryText: {
-    color: colors.white,
-    fontWeight: "bold",
   },
   innerContainer: {
     width: "80%",
@@ -147,6 +143,49 @@ const styles = StyleSheet.create({
     color: colors.medium,
     fontSize: 16,
     textAlign: "center",
+  },
+  categorySection: {
+    marginBottom: 20,
+    width: "90%",
+  },
+  categoryHeader: {
+    backgroundColor: colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    width: "90%",
+  },
+  categoryHeaderText: {
+    color: colors.white,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  categoryContainer: {
+    backgroundColor: colors.white,
+    width: "60%",
+    height: 50,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+    paddingHorizontal: 20,
+    marginRight: 20,
+    marginLeft: "auto",
+  },
+  category: {
+    backgroundColor: colors.primary,
+    width: "90%",
+    height: 80,
+    borderRadius: 10,
+    justifyContent: "center",
+    padding: 12,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  categoryText: {
+    color: colors.white,
+    fontWeight: "bold",
   },
 });
 

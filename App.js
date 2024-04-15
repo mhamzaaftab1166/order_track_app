@@ -1,15 +1,19 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import AdminNavigator from "./navigation/admin/AdminNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import SalesmanNavigator from "./navigation/SalesmanNavigator";
 import { CartProvider } from "./CartContext";
+import DepartmentScreen from "./screens/DepartmentScreen";
+import ProfileNavigator from "./navigation/admin/ProfileNavigator";
+import SelectCategory from "./screens/SelectCategories";
+import Categories from "./screens/Categories";
 
 export default function App() {
   return (
     <CartProvider>
       <NavigationContainer>
-        <SalesmanNavigator />
+        {/* <SalesmanNavigator /> */}
+        <ProfileNavigator />
       </NavigationContainer>
     </CartProvider>
 
@@ -21,7 +25,7 @@ export default function App() {
 
     // <DepartmentScreen />
 
-    // <Category />
+    // <Categories />
 
     // <SelectCategory />
 

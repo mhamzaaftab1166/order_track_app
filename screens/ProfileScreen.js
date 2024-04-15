@@ -189,10 +189,68 @@ const ProfileScreen = ({ navigation }) => {
                 <Text>Manage Allocation</Text>
               </TouchableOpacity>
             </View>
-            <Text style={{ color: "black", fontSize: 18, fontWeight: "bold" }}>
-              Sales Over Month
+            <Text
+              style={{ color: colors.dark, fontSize: 18, fontWeight: "bold" }}
+            >
+              More Options
             </Text>
-            <BarChart
+            <View style={{ flexDirection: "row", width: "90%" }}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("department")}
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: colors.light,
+                  padding: 5,
+                  borderRadius: 10,
+                  width: 100,
+                  height: 90,
+                  marginVertical: 10,
+                }}
+              >
+                <MaterialIcons name="add-business" size={32} color="black" />
+                <Text>Departments</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: colors.light,
+                  padding: 5,
+                  borderRadius: 10,
+                  width: 100,
+                  height: 90,
+                  marginVertical: 10,
+                  marginHorizontal: 15,
+                }}
+              >
+                <MaterialIcons name="history" size={32} color="black" />
+                <Text>Order History</Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: colors.light,
+                  padding: 5,
+                  borderRadius: 10,
+                  width: 100,
+                  height: 90,
+                  marginVertical: 10,
+                }}
+              >
+                <MaterialIcons name="settings" size={32} color="black" />
+                <Text>Settings</Text>
+              </View>
+            </View>
+
+            <Text onPress={() => navigation.navigate("categories")}>
+              categories
+            </Text>
+            {/* <Text style={{ color: "black", fontSize: 18, fontWeight: "bold" }}>
+              Sales Over Month
+            </Text> */}
+            {/* <BarChart
               // style={graphStyle}
               data={data}
               width={screenWidth}
@@ -200,7 +258,7 @@ const ProfileScreen = ({ navigation }) => {
               yAxisLabel="%"
               chartConfig={chartConfig}
               verticalLabelRotation={30}
-            />
+            /> */}
             {/* <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -285,6 +343,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
+    flex: 1,
   },
   row: {
     flexDirection: "row",

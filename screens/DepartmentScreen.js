@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Yup from "yup";
 import AppFormField from "../components/forms/AppFormField";
@@ -9,19 +9,30 @@ import colors from "../config/colors";
 import AppText from "../components/AppText";
 import SafeScreen from "../components/SafeScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { saveDepartment, getDepartments } from "../utilty/deptUtility";
 
 const validationSchema = Yup.object().shape({
   department: Yup.string().required().label("Department"),
 });
 
 function DepartmentScreen({ navigation }) {
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const [errorVisible, setErrorVisible] = useState(false);
-  const [departments, setDepartments] = useState([
-    "Department 1",
-    "Department 2",
-    "Department 3",
-  ]); // Dummy data
+  const [departments, setDepartments] = useState(null); // Initialize to null
+
+  useEffect(() => {
+    // Fetch departments from backend when component mounts
+    fetchDepartments();
+  }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const fetchedDepartments = await getDepartments();
+      setDepartments(fetchedDepartments.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
 
   const handleSubmit = async (values) => {
     if (!validationSchema.isValidSync(values)) {
@@ -29,12 +40,28 @@ function DepartmentScreen({ navigation }) {
       setErrorVisible(true);
       return;
     }
-    setDepartments((prevDepartments) => [
-      ...prevDepartments,
-      values.department,
-    ]);
-    console.log(values);
+
+    try {
+      // Save department to backend
+      await saveDepartment({ name: values.department });
+
+      // Fetch updated department list from backend
+      fetchDepartments();
+
+      // Clear form field and errors
+      setError("");
+      setErrorVisible(false);
+    } catch (error) {
+      console.error("Error saving department:", error);
+      setError("Error saving department");
+      setErrorVisible(true);
+    }
   };
+
+  // Check if departments is still null
+  if (departments === null) {
+    return null; // Render nothing while departments are being fetched
+  }
 
   return (
     <SafeScreen style={{ paddingTop: 50 }}>
@@ -64,24 +91,15 @@ function DepartmentScreen({ navigation }) {
           </View>
           <View style={{ marginTop: 60 }}>
             <AppText style={{ fontSize: 26, fontWeight: "bold" }}>
-              Add Departments
+              Added Departments
             </AppText>
           </View>
           <View style={{ marginVertical: 20 }}>
             {departments.map((department, index) => (
               <View key={index} style={styles.departmentContainer}>
-                <AppText style={styles.departmentText}>{department}</AppText>
-                <MaterialCommunityIcons
-                  name="comment-edit"
-                  size={24}
-                  color={colors.primary}
-                />
-                <MaterialCommunityIcons
-                  name="delete"
-                  size={24}
-                  color={colors.primary}
-                  style={styles.icon}
-                />
+                <AppText style={styles.departmentText}>
+                  {department.name}
+                </AppText>
               </View>
             ))}
           </View>
