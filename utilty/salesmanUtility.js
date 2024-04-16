@@ -16,6 +16,15 @@ export function saveSalesman(salesman) {
   }
   return httpService.post(apiEnd, salesman);
 }
+
+export function verification(code) {
+  return httpService.post(`${apiEnd}/code`, { code });
+}
+
+export function resend() {
+  return httpService.get(`${apiEnd}/resend`);
+}
+
 export function getSalesmans() {
   return httpService.get(config.apiUrl + "/salesmans");
 }

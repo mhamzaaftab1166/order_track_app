@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Yup from "yup";
 import AppFormField from "../components/forms/AppFormField";
@@ -10,7 +10,7 @@ import colors from "../config/colors";
 import AppText from "../components/AppText";
 
 const validationSchema = Yup.object({
-  id: Yup.string().required().label("ID"),
+  email: Yup.string().email().required().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
 });
 
@@ -18,9 +18,7 @@ function LoginScreen({ navigation }) {
   const [error, setError] = useState();
   const [errorVisible, setErrorVisible] = useState(false);
 
-  const handleSubmit = async (info) => {
-    console.log(info);
-  };
+  const handleSubmit = async ({ email, password }) => {};
 
   return (
     <View style={styles.container}>
@@ -31,16 +29,16 @@ function LoginScreen({ navigation }) {
         </View>
         <View style={styles.formContainer}>
           <AppForm
-            initialValues={{ id: "", password: "" }}
+            initialValues={{ email: "", password: "" }}
             onSubmit={handleSubmit}
             validationSchema={validationSchema}
           >
             <AppErrorMessage error={error} visible={errorVisible} />
             <AppFormField
-              name={"id"} // Changed "ID" to "id"
+              name={"email"}
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="ID"
+              placeholder="Email"
             />
             <AppFormField
               name={"password"}

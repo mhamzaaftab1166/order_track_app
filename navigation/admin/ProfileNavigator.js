@@ -13,6 +13,7 @@ import AllocateForm from "../../screens/AllocateForm";
 import DepartmentScreen from "../../screens/DepartmentScreen";
 import Category from "../../screens/Categories";
 import SelectCategory from "../../screens/SelectCategories";
+import EmailVerificationInput from "../../screens/VerificationScreen";
 
 const ProfileNavigator = () => {
   return (
@@ -32,6 +33,7 @@ const ProfileNavigator = () => {
       <Stack.Screen name="department" component={DepartmentScreen} />
       <Stack.Screen name="categories" component={Category} />
       <Stack.Screen name="addcat" component={SelectCategory} />
+      <Stack.Screen name="verification" component={EmailVerificationInput} />
     </Stack.Navigator>
   );
 };

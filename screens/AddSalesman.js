@@ -49,12 +49,11 @@ function AddSalesman({ navigation, route }) {
         info._id = salesman._id;
       }
       info.department = info.department.value;
-      console.log(info);
       await saveSalesman(info);
       if (info._id) {
         navigation.navigate("addedsalesman");
       } else {
-        navigation.navigate("profiles");
+        navigation.navigate("verification", { email: info.email });
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {

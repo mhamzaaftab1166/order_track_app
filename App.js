@@ -7,29 +7,26 @@ import DepartmentScreen from "./screens/DepartmentScreen";
 import ProfileNavigator from "./navigation/admin/ProfileNavigator";
 import SelectCategory from "./screens/SelectCategories";
 import Categories from "./screens/Categories";
+import RoleScreen from "./screens/RoleScreen";
+import LoginNav from "./navigation/loginNav";
 
 export default function App() {
   return (
-    <CartProvider>
-      <NavigationContainer>
-        {/* <SalesmanNavigator /> */}
-        <ProfileNavigator />
-      </NavigationContainer>
-    </CartProvider>
+    // <NavigationContainer>
+    //   <LoginNav></LoginNav>
+    // </NavigationContainer>
 
-    // <LoginScreen />
+    // for admin
+    <NavigationContainer>
+      <ProfileNavigator />
+    </NavigationContainer>
 
-    // <AddSalesman></AddSalesman>
-
-    // <AddProduct />
-
-    // <DepartmentScreen />
-
-    // <Categories />
-
-    // <SelectCategory />
-
-    // <ProductList />
+    //for salesman
+    // <CartProvider>
+    //   <NavigationContainer>
+    //     <SalesmanNavigator />
+    //   </NavigationContainer>
+    // </CartProvider>
   );
 }
 
