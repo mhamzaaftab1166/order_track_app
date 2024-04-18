@@ -8,7 +8,7 @@ import AppErrorMessage from "../components/forms/AppErrorMessage";
 import { TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
-import salesmanAuthService from "../utilty/salesmanAuthService";
+import adminAuth from "../utilty/adminAuth";
 import jwtDecode from "jwt-decode";
 import { UserContext } from "../UserContext";
 
@@ -25,10 +25,10 @@ function LoginScreen({ navigation }) {
   const handleSubmit = async ({ email, password }) => {
     try {
       // setIsLoading(true);
-      const { data } = await salesmanAuthService.login(email, password);
+      const { data } = await adminAuth.login(email, password);
       const user = jwtDecode(data);
       authContext.setUser(user);
-      salesmanAuthService.storeToken(data);
+      adminAuth.storeToken(data);
       setErrorVisible(false);
     } catch (error) {
       if (error.response && error.response.status === 400)
@@ -42,7 +42,7 @@ function LoginScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.logoContainer}>
-          <AppText style={styles.logo}>User (Log in)</AppText>
+          <AppText style={styles.logo}>Admin (Log in)</AppText>
           <AppText style={styles.subText}>Log in to proceed further</AppText>
         </View>
         <View style={styles.formContainer}>

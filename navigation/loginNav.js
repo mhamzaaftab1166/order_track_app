@@ -3,6 +3,7 @@ const Stack = createStackNavigator();
 import React from "react";
 import LoginScreen from "../screens/LoginScreen";
 import RoleScreen from "../screens/RoleScreen";
+import AdminLoginScreen from "../screens/AdminLoginScreen";
 
 const LoginNav = () => {
   return (
@@ -13,6 +14,7 @@ const LoginNav = () => {
     >
       <Stack.Screen name="role" component={RoleScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
+      <Stack.Screen name="adminlogin" component={AdminLoginScreen} />
     </Stack.Navigator>
   );
 };

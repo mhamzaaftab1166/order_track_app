@@ -21,7 +21,10 @@ function RoleScreen({ navigation }) {
             onPress={() => navigation.navigate("login")}
             title={"Salesman"}
           />
-          <AppButton title={"Admin"} />
+          <AppButton
+            onPress={() => navigation.navigate("adminlogin")}
+            title={"Admin"}
+          />
         </View>
       </View>
     </View>

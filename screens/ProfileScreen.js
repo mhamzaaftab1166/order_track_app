@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -16,6 +16,8 @@ import { BarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width * 0.8;
 import colors from "../config/colors";
+import adminAuth from "../utilty/adminAuth";
+import { UserContext } from "../UserContext";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -36,6 +38,7 @@ const data = {
   ],
 };
 const ProfileScreen = ({ navigation }) => {
+  const { user, setUser } = useContext(UserContext);
   return (
     <SafeScreen style={styles.background}>
       <ScrollView>
@@ -246,6 +249,14 @@ const ProfileScreen = ({ navigation }) => {
 
             <Text onPress={() => navigation.navigate("categories")}>
               categories
+            </Text>
+            <Text
+              onPress={() => {
+                setUser(null);
+                adminAuth.removeToken();
+              }}
+            >
+              logout
             </Text>
             {/* <Text style={{ color: "black", fontSize: 18, fontWeight: "bold" }}>
               Sales Over Month

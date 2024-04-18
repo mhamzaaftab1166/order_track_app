@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "../../config/colors";
 import AppText from "../../components/AppText";
@@ -12,6 +12,8 @@ import { BarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width * 0.8;
 import { FontAwesome5 } from "@expo/vector-icons";
+import { UserContext } from "../../UserContext";
+import salesmanAuthService from "../../utilty/salesmanAuthService";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -33,6 +35,8 @@ const data = {
 };
 
 const UserHomeScreen = ({ navigation }) => {
+  const { user, setUser } = useContext(UserContext);
+
   const handleSettingsPress = () => {
     // Handle settings press logic here
     navigation.navigate("profile");
@@ -53,10 +57,15 @@ const UserHomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.settingsButton}
-        onPress={handleSettingsPress}
+        // onPress={handleSettingsPress}
+        onPress={() => {
+          setUser(null);
+          salesmanAuthService.removeToken();
+        }}
       >
         <MaterialIcons name="settings" size={24} color="black" />
       </TouchableOpacity>
+
       <View
         style={{
           width: "85%",
