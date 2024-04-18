@@ -70,7 +70,12 @@ function LoginScreen({ navigation }) {
               onPress={() => null}
               style={{ alignItems: "flex-end", paddingVertical: 5 }}
             >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text
+                onPress={() => navigation.navigate("adminforgot")}
+                style={styles.forgotPasswordText}
+              >
+                Forgot Password?
+              </Text>
             </TouchableOpacity>
             <SubmitButton title={"Login"} />
           </AppForm>

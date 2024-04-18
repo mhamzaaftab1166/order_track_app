@@ -29,6 +29,18 @@ export function getSalesmans() {
   return httpService.get(config.apiUrl + "/salesmans");
 }
 
+export const forgotPassword = async (email) => {
+  return httpService.post(`${apiEnd}/forgot`, { email });
+};
+
+export const verifyForgotPassword = async (code) => {
+  return httpService.post(`${apiEnd}/code`, { forgotPassword: true, code });
+};
+
+export const updatePassword = async (email, password) => {
+  return httpService.put(`${apiEnd}/updatePass`, { email, password });
+};
+
 export function deleteSalesman(id) {
   return httpService.delete(salesmanUrl(id));
 }
