@@ -14,7 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import * as Location from "expo-location";
 import { saveOrder } from "../../utilty/orderUtility";
 
-const CartScreen = () => {
+const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart } = useCart();
   const [location, setLocation] = useState(null);
 
@@ -64,6 +64,7 @@ const CartScreen = () => {
       try {
         await saveOrder(orderData);
         console.log("done");
+        navigation.navigate("userhome");
       } catch (error) {
         console.log(error.respone.data);
       }
