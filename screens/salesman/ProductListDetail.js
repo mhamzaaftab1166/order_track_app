@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,8 +11,11 @@ import { Slider } from "react-native-elements";
 import colors from "../../config/colors";
 import Icon from "react-native-vector-icons/Ionicons"; // Import Ionicons
 import { useCart } from "../../CartContext";
+import { UserContext } from "../../UserContext";
 
 const ProductListDetail = ({ route, navigation }) => {
+  const { user } = useContext(UserContext);
+
   const { product } = route.params;
   const { addToCart, cartItems } = useCart();
   console.log(cartItems);
@@ -50,13 +53,16 @@ const ProductListDetail = ({ route, navigation }) => {
   const handleAddToCart = () => {
     // Add logic to add the selected product to the cart
     addToCart({
-      _id: product._id,
-      selectedSize: sizesArray[selectedSizeIndex].size,
-      selectedColor,
+      salesman: user._id,
+      pname: product._id,
+      pdepartment: product.department,
+      pcategory: product.category,
+      size: sizesArray[selectedSizeIndex].size,
+      color: selectedColor,
       quantity,
-      imageUrl: product.imageUrl[0],
-      name: product.name,
-      price: product.price,
+      pimage: product.imageUrl,
+      // name: product.name,
+      price: product.price * quantity,
     });
     // Show alert
     alert("Your Item added to cart sucessfully!");
