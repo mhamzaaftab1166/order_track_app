@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 import { saveOrder } from "../../utilty/orderUtility";
 
 const CartScreen = ({ navigation }) => {
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, setCartItems } = useCart();
   const [location, setLocation] = useState(null);
 
   const renderItem = ({ item }) => (
@@ -64,12 +64,11 @@ const CartScreen = ({ navigation }) => {
       try {
         await saveOrder(orderData);
         console.log("done");
+        setCartItems([]);
         navigation.navigate("userhome");
       } catch (error) {
-        console.log(error.respone.data);
+        Alert.alert(error.respone.data);
       }
-      console.log(orderData); // Log the order data
-      // Send order data to backend
     } catch (error) {
       console.error("Error handling place order:", error);
       Alert.alert("Error", "Could not place order. Please try again later.");

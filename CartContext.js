@@ -24,6 +24,7 @@ export const CartProvider = ({ children }) => {
   // Context value
   const value = {
     cartItems,
+    setCartItems,
     addToCart,
     removeFromCart,
   };
