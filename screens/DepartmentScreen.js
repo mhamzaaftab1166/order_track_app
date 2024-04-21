@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   departmentContainer: {
-    backgroundColor: colors.light,
+    backgroundColor: "#e8e8e8",
     width: "100%",
     height: 70,
     borderRadius: 10,

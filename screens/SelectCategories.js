@@ -12,8 +12,8 @@ function SelectCategory({ navigation, route }) {
   const [level2Category, setLevel2Category] = useState("");
   const [isEmptyError, setIsEmptyError] = useState(false);
 
-  const { subcategory } = route?.params;
-  console.log(subcategory);
+  // const { subcategory } = route?.params;
+  // console.log(subcategory);
   const handleSubmit = async () => {
     if (level1Category && level2Category) {
       const category = {

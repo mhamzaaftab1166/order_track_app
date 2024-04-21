@@ -1,14 +1,9 @@
 // App.js
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import SalesmanNavigator from "./navigation/SalesmanNavigator";
 import { CartProvider } from "./CartContext";
-import DepartmentScreen from "./screens/DepartmentScreen";
 import ProfileNavigator from "./navigation/admin/ProfileNavigator";
-import SelectCategory from "./screens/SelectCategories";
-import Categories from "./screens/Categories";
-import RoleScreen from "./screens/RoleScreen";
 import LoginNav from "./navigation/loginNav";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-gesture-handler";

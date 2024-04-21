@@ -14,7 +14,6 @@ import { getDepartments } from "../utilty/deptUtility";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
-  cnic: Yup.string().required().label("CNIC"),
   phone: Yup.string().required().label("Phone"),
   email: Yup.string().required().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
@@ -76,7 +75,6 @@ function AddSalesman({ navigation, route }) {
           <AppForm
             initialValues={{
               name: salesman ? salesman.name : "",
-              cnic: salesman ? salesman.cnic : "",
               phone: salesman ? salesman.phone : "",
               email: salesman ? salesman.email : "",
               password: salesman ? salesman.password : "",
@@ -91,12 +89,6 @@ function AddSalesman({ navigation, route }) {
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="Enter name"
-            />
-            <AppFormField
-              name={"cnic"}
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder="CNIC"
             />
             <AppFormField
               name={"phone"}
@@ -116,7 +108,7 @@ function AddSalesman({ navigation, route }) {
                   name={"password"}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  placeholder="Password"
+                  placeholder="Assign a Password"
                   secureTextEntry={!showPassword}
                   textContentType="password"
                 />

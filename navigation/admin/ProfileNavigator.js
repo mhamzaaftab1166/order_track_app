@@ -14,6 +14,9 @@ import DepartmentScreen from "../../screens/DepartmentScreen";
 import Category from "../../screens/Categories";
 import SelectCategory from "../../screens/SelectCategories";
 import EmailVerificationInput from "../../screens/VerificationScreen";
+import OrderHistoryScreen from "../../screens/admin/OrderHistory";
+import OrderDetailsScreen from "../../screens/admin/OrderDetails";
+import OrderDetailsMap from "../../screens/admin/OrderDetailsMap";
 
 const ProfileNavigator = () => {
   return (
@@ -34,6 +37,9 @@ const ProfileNavigator = () => {
       <Stack.Screen name="categories" component={Category} />
       <Stack.Screen name="addcat" component={SelectCategory} />
       <Stack.Screen name="verification" component={EmailVerificationInput} />
+      <Stack.Screen name="history" component={OrderHistoryScreen} />
+      <Stack.Screen name="orderdetail" component={OrderDetailsScreen} />
+      <Stack.Screen name="orderdetailmap" component={OrderDetailsMap} />
     </Stack.Navigator>
   );
 };

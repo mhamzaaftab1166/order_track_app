@@ -18,6 +18,7 @@ const screenWidth = Dimensions.get("window").width * 0.8;
 import colors from "../config/colors";
 import adminAuth from "../utilty/adminAuth";
 import { UserContext } from "../UserContext";
+import { Entypo } from "@expo/vector-icons";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -93,7 +94,7 @@ const ProfileScreen = ({ navigation }) => {
                   <TouchableOpacity
                     onPress={() => navigation.navigate("addedproducts")}
                     style={{
-                      backgroundColor: "#FFDB58",
+                      backgroundColor: "#fcb100",
                       height: 145,
                       borderRadius: 10,
                       padding: 8,
@@ -111,7 +112,7 @@ const ProfileScreen = ({ navigation }) => {
                   <TouchableOpacity
                     onPress={() => navigation.navigate("addedsalesman")}
                     style={{
-                      backgroundColor: "#00BFFF",
+                      backgroundColor: "#50c7b7",
                       height: 145,
                       borderRadius: 10,
                       padding: 8,
@@ -127,11 +128,11 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
               </View>
             </View>
-            <Text
+            {/* <Text
               style={{ color: colors.dark, fontSize: 18, fontWeight: "bold" }}
             >
               Frame
-            </Text>
+            </Text> */}
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
@@ -197,59 +198,61 @@ const ProfileScreen = ({ navigation }) => {
             >
               More Options
             </Text>
-            <View style={{ flexDirection: "row", width: "90%" }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <TouchableOpacity
                 onPress={() => navigation.navigate("department")}
                 style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: colors.light,
-                  padding: 5,
-                  borderRadius: 10,
                   width: 100,
                   height: 90,
+                  alignItems: "center",
                   marginVertical: 10,
+                  backgroundColor: "#f8f4f4",
+                  justifyContent: "space-around",
+                  borderRadius: 10,
+                  padding: 5,
                 }}
               >
                 <MaterialIcons name="add-business" size={32} color="black" />
                 <Text>Departments</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={() => navigation.navigate("history")}
                 style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: colors.light,
-                  padding: 5,
-                  borderRadius: 10,
                   width: 100,
                   height: 90,
+                  alignItems: "center",
                   marginVertical: 10,
-                  marginHorizontal: 15,
+                  backgroundColor: "#f8f4f4",
+                  justifyContent: "space-around",
+                  borderRadius: 10,
+                  padding: 5,
                 }}
               >
                 <MaterialIcons name="history" size={32} color="black" />
                 <Text>Order History</Text>
               </TouchableOpacity>
-              <View
+              <TouchableOpacity
+                onPress={() => navigation.navigate("categories")}
                 style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: colors.light,
-                  padding: 5,
-                  borderRadius: 10,
                   width: 100,
                   height: 90,
+                  alignItems: "center",
                   marginVertical: 10,
+                  backgroundColor: "#f8f4f4",
+                  justifyContent: "space-around",
+                  borderRadius: 10,
+                  padding: 5,
                 }}
               >
-                <MaterialIcons name="settings" size={32} color="black" />
-                <Text>Settings</Text>
-              </View>
+                <Entypo name="menu" size={32} color="black" />
+
+                <Text>Categories</Text>
+              </TouchableOpacity>
             </View>
 
-            <Text onPress={() => navigation.navigate("categories")}>
-              categories
-            </Text>
+            {/* <Text>categories</Text> */}
             <Text
               onPress={() => {
                 setUser(null);

@@ -46,5 +46,5 @@ export function deleteSalesman(id) {
 }
 
 export function getSaleman(salesmanId) {
-  return httpService.get(apiEndpoint + `/${salesmanId}`);
+  return httpService.get(apiEnd + `/${salesmanId}`);
 }

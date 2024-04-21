@@ -95,7 +95,7 @@ const AddedProducts = ({ navigation }) => {
                         color={colors.primary}
                       />
                     </TouchableOpacity>
-                    <Text style={styles.price}>${product.price}</Text>
+                    <Text style={styles.price}>Rs. {product.price}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

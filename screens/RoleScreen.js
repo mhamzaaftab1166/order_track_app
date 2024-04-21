@@ -13,7 +13,7 @@ function RoleScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.logoContainer}>
-          <AppText style={styles.logo}>User (Log in)</AppText>
+          <AppText style={styles.logo}>Log In</AppText>
           <AppText style={styles.subText}>Tell us about your role</AppText>
         </View>
         <View style={styles.formContainer}>
