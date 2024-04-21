@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { getSaleman } from "../../utilty/salesmanUtility";
 
 const OrderDetailsScreen = ({ navigation, route }) => {
@@ -35,6 +35,7 @@ const OrderDetailsScreen = ({ navigation, route }) => {
       {/* Smaller Map */}
       <View style={styles.mapContainer}>
         <MapView
+          provider={PROVIDER_GOOGLE}
           onPress={() =>
             navigation.navigate("orderdetailmap", {
               long: order.longitude,
@@ -43,11 +44,24 @@ const OrderDetailsScreen = ({ navigation, route }) => {
           }
           style={styles.map}
           initialRegion={{
-            latitude: order.latitude,
-            longitude: order.longitude, // Corrected typo
+            latitude: parseFloat(order.latitude), // Parse latitude to number
+            longitude: parseFloat(order.longitude),
             latitudeDelta: 0.01, // Adjusted for closer zoom
             longitudeDelta: 0.01, // Adjusted for closer zoom
           }}
+        >
+          <Marker
+            coordinate={{
+              latitude: parseFloat(order.latitude), // Parse latitude to number
+              longitude: parseFloat(order.longitude), // Parse longitude to number
+            }}
+            anchor={{ x: 0.5, y: 0.5 }}
+            title="Order Location"
+          />
+        </MapView>
+        {/* <MapView
+         
+        
         >
           <Marker
             coordinate={{
@@ -56,7 +70,7 @@ const OrderDetailsScreen = ({ navigation, route }) => {
             }}
             title="Order Location"
           />
-        </MapView>
+        </MapView> */}
       </View>
 
       {/* Image Carousel */}

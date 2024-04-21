@@ -12,16 +12,16 @@ const OrderDetailsMap = ({ navigation, route }) => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: lat,
-          longitude: long,
+          latitude: parseFloat(lat),
+          longitude: parseFloat(long),
           latitudeDelta: 0.01, // Adjusted for closer zoom
           longitudeDelta: 0.01, // Adjusted for closer zoom
         }}
       >
         <Marker
           coordinate={{
-            latitude: lat,
-            longitude: long, // Corrected typo
+            latitude: parseFloat(lat),
+            longitude: parseFloat(long), // Corrected typo
           }}
           title="Order Location"
         />
