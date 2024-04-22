@@ -56,7 +56,7 @@ function Category({ navigation }) {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate("addcat")}
+          onPress={() => navigation.navigate("addcat", { subcat: null })}
           style={styles.category}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -111,8 +111,7 @@ function Category({ navigation }) {
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate("addcat", {
-                        subcategory: subcategory.subCategory,
-                        categoryId: subcategory._id,
+                        subcat: subcategory.subCategory,
                       })
                     }
                     style={styles.categoryContainer}

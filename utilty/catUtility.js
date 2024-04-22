@@ -24,6 +24,10 @@ export function deleteCategory(id) {
   return httpService.delete(categoryUrl(id));
 }
 
+export function getCat(id) {
+  return httpService.get(categoryUrl(id));
+}
+
 export function getCategory(categoryId) {
   return httpService.get(apiEndpoint + `/${categoryId}`);
 }

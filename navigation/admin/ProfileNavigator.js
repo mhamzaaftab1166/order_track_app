@@ -17,6 +17,7 @@ import EmailVerificationInput from "../../screens/VerificationScreen";
 import OrderHistoryScreen from "../../screens/admin/OrderHistory";
 import OrderDetailsScreen from "../../screens/admin/OrderDetails";
 import OrderDetailsMap from "../../screens/admin/OrderDetailsMap";
+import DeptProduct from "../../screens/admin/DeptProduct";
 
 const ProfileNavigator = () => {
   return (
@@ -40,6 +41,7 @@ const ProfileNavigator = () => {
       <Stack.Screen name="history" component={OrderHistoryScreen} />
       <Stack.Screen name="orderdetail" component={OrderDetailsScreen} />
       <Stack.Screen name="orderdetailmap" component={OrderDetailsMap} />
+      <Stack.Screen name="deptprod" component={DeptProduct} />
     </Stack.Navigator>
   );
 };

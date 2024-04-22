@@ -25,3 +25,7 @@ export function saveProduct(product) {
 export function deleteProduct(productId) {
   return httpService.delete(apiEndpoint + `/${productId}`);
 }
+
+export function getdProducts(did) {
+  return httpService.get(`${apiEndpoint}/department/${did}`);
+}

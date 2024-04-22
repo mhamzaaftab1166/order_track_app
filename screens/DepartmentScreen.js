@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
 import AppFormField from "../components/forms/AppFormField";
 import SubmitButton from "../components/forms/SubmitButton";
@@ -96,11 +96,20 @@ function DepartmentScreen({ navigation }) {
           </View>
           <View style={{ marginVertical: 20 }}>
             {departments.map((department, index) => (
-              <View key={index} style={styles.departmentContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("deptprod", {
+                    id: department._id,
+                    name: department.name,
+                  })
+                }
+                key={index}
+                style={styles.departmentContainer}
+              >
                 <AppText style={styles.departmentText}>
                   {department.name}
                 </AppText>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>

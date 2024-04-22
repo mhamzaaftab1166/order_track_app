@@ -57,7 +57,7 @@ const AddedProducts = ({ navigation }) => {
           ) : (
             products.map((product, index) => (
               <TouchableOpacity
-                onPress={() => navigation.navigate("addproduct", { product })}
+                // onPress={() => navigation.navigate("addproduct", { product })}
                 style={styles.productContainer}
                 key={index}
               >
