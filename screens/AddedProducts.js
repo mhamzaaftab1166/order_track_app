@@ -15,6 +15,7 @@ import AppText from "../components/AppText";
 
 const AddedProducts = ({ navigation }) => {
   const [products, setProducts] = useState([]);
+  const [isListView, setIsListView] = useState(false); // State to toggle between list view and cart-like view
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,19 +46,61 @@ const AddedProducts = ({ navigation }) => {
   return (
     <SafeScreen>
       <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.header}>
+        <View style={styles.header}>
+          <View style={{}}>
             <AppText style={styles.logo}>Added Products</AppText>
             <AppText style={styles.subText}>List of added products</AppText>
           </View>
+          <View style={styles.iconContainer}>
+            <TouchableOpacity onPress={() => setIsListView(false)}>
+              <MaterialCommunityIcons
+                name="view-grid"
+                size={24}
+                color={isListView ? colors.medium : colors.primary}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setIsListView(true)}>
+              <MaterialCommunityIcons
+                name="view-list"
+                size={24}
+                color={isListView ? colors.primary : colors.medium}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.container}>
           {products.length === 0 ? (
-            <View style={styles.loadingContainer}>
-              <Text>No Products!</Text>
-            </View>
+            <Text>No Products!</Text>
+          ) : isListView ? (
+            products.map((product, index) => (
+              <View style={styles.listItemContainer} key={index}>
+                <Image
+                  source={{ uri: product.imageUrl[0] }}
+                  style={styles.listItemImage}
+                  resizeMode="cover"
+                  defaultSource={require("../assets/noimage.jpg")}
+                />
+                <View style={styles.listItemDetails}>
+                  <Text style={styles.listItemName}>{product.name}</Text>
+                  <Text style={styles.listItemDescription}>
+                    {product.description}
+                  </Text>
+                  <Text style={styles.listItemPrice}>Rs. {product.price}</Text>
+                  <TouchableOpacity onPress={() => handleDelete(product._id)}>
+                    <MaterialCommunityIcons
+                      name="delete"
+                      size={24}
+                      color={colors.primary}
+                      style={{ alignSelf: "flex-end" }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
           ) : (
             products.map((product, index) => (
               <TouchableOpacity
-                // onPress={() => navigation.navigate("addproduct", { product })}
+                onPress={() => navigation.navigate("addproduct", { product })}
                 style={styles.productContainer}
                 key={index}
               >
@@ -88,7 +131,10 @@ const AddedProducts = ({ navigation }) => {
                     </Text>
                   </View>
                   <View style={styles.actionsContainer}>
-                    <TouchableOpacity onPress={() => handleDelete(product._id)}>
+                    <TouchableOpacity
+                      onPress={() => handleDelete(product._id)}
+                      style={{ alignSelf: "flex-end" }}
+                    >
                       <MaterialCommunityIcons
                         name="delete"
                         size={24}
@@ -108,30 +154,30 @@ const AddedProducts = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: colors.white,
-    padding: 20,
-  },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
-    alignItems: "flex-start",
-    width: "100%",
     paddingHorizontal: 20,
   },
   logo: {
     color: colors.dark,
-    fontSize: 35,
+    fontSize: 25,
     fontWeight: "bold",
   },
   subText: {
     color: colors.medium,
     fontSize: 16,
   },
-  loadingContainer: {
+  iconContainer: {
+    flexDirection: "row",
+  },
+  container: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: colors.white,
+    padding: 20,
   },
   productContainer: {
     marginBottom: 20,
@@ -182,6 +228,40 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.danger,
     marginLeft: 10,
+  },
+  listItemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.light,
+  },
+  listItemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  listItemDetails: {
+    flex: 1,
+  },
+  listItemName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.dark,
+    marginBottom: 5,
+  },
+  listItemDescription: {
+    marginBottom: 5,
+    color: colors.medium,
+  },
+  listItemPrice: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.danger,
+    marginBottom: 5,
+    alignSelf: "flex-end",
   },
 });
 
