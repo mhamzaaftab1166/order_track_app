@@ -15,13 +15,13 @@ import AppText from "../components/AppText";
 
 const AddedProducts = ({ navigation }) => {
   const [products, setProducts] = useState([]);
-  const [isListView, setIsListView] = useState(false); // State to toggle between list view and cart-like view
+  const [isListView, setIsListView] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProducts();
-        setProducts(response.data); // Assuming response.data is an array of products
+        setProducts(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -33,7 +33,6 @@ const AddedProducts = ({ navigation }) => {
   const handleDelete = async (productId) => {
     try {
       await deleteProduct(productId);
-      // Remove the deleted product from the list
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== productId)
       );
@@ -81,10 +80,11 @@ const AddedProducts = ({ navigation }) => {
                   defaultSource={require("../assets/noimage.jpg")}
                 />
                 <View style={styles.listItemDetails}>
-                  <Text style={styles.listItemName}>{product.name}</Text>
+                  <Text style={[styles.listItemName, {}]}>{product.name}</Text>
                   <Text style={styles.listItemDescription}>
                     {product.description}
                   </Text>
+
                   <Text style={styles.listItemPrice}>Rs. {product.price}</Text>
                   <TouchableOpacity onPress={() => handleDelete(product._id)}>
                     <MaterialCommunityIcons
@@ -112,20 +112,22 @@ const AddedProducts = ({ navigation }) => {
                 <View style={styles.card}>
                   <View style={styles.detailsContainer}>
                     <Text style={styles.name}>{product.name}</Text>
-                    <Text style={styles.size}>
-                      Sizes: Small -{" "}
-                      <Text style={styles.bold}>{product.sizes.small}</Text>,
-                      Medium -{" "}
-                      <Text style={styles.bold}>{product.sizes.medium}</Text>,
-                      Large -{" "}
-                      <Text style={styles.bold}>{product.sizes.large}</Text>
-                    </Text>
-                    <Text style={styles.color}>
-                      Colors:{" "}
-                      <Text style={styles.bold}>
-                        {product.color.join(", ")}
-                      </Text>
-                    </Text>
+                    {product.colors.map((color, colorIndex) => (
+                      <View key={colorIndex}>
+                        <Text style={styles.color}>{color.name}: </Text>
+                        <View style={styles.sizeContainer}>
+                          {Object.keys(color.sizes).map((size, sizeIndex) => (
+                            <Text key={sizeIndex} style={styles.sizeText}>
+                              {size}:{" "}
+                              <Text style={styles.bold}>
+                                {color.sizes[size] || 0}
+                              </Text>
+                            </Text>
+                          ))}
+                        </View>
+                      </View>
+                    ))}
+
                     <Text style={styles.description}>
                       {product.description}
                     </Text>
@@ -203,14 +205,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: colors.dark,
   },
-  size: {
-    marginBottom: 5,
-    color: colors.medium,
-  },
   bold: {
     fontWeight: "bold",
   },
   color: {
+    fontWeight: "bold",
     marginBottom: 5,
     color: colors.medium,
   },
@@ -238,19 +237,21 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.light,
   },
   listItemImage: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderRadius: 5,
     marginRight: 10,
   },
   listItemDetails: {
     flex: 1,
+    justifyContent: "center",
   },
   listItemName: {
     fontSize: 18,
     fontWeight: "bold",
     color: colors.dark,
     marginBottom: 5,
+    marginTop: 40,
   },
   listItemDescription: {
     marginBottom: 5,
@@ -262,6 +263,22 @@ const styles = StyleSheet.create({
     color: colors.danger,
     marginBottom: 5,
     alignSelf: "flex-end",
+  },
+  color: {
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: colors.medium,
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  sizeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 5,
+  },
+  sizeText: {
+    marginRight: 10,
   },
 });
 
