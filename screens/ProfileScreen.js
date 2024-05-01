@@ -19,6 +19,7 @@ import colors from "../config/colors";
 import adminAuth from "../utilty/adminAuth";
 import { UserContext } from "../UserContext";
 import { Entypo } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -251,7 +252,31 @@ const ProfileScreen = ({ navigation }) => {
                 <Text>Categories</Text>
               </TouchableOpacity>
             </View>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <TouchableOpacity
+                onPress={() => navigation.navigate("sizes")}
+                style={{
+                  width: 100,
+                  height: 90,
+                  alignItems: "center",
+                  marginVertical: 10,
+                  backgroundColor: "#f8f4f4",
+                  justifyContent: "space-around",
+                  borderRadius: 10,
+                  padding: 5,
+                }}
+              >
+                <FontAwesome6
+                  name="arrow-up-wide-short"
+                  size={32}
+                  color="black"
+                />
 
+                <Text>Sizes</Text>
+              </TouchableOpacity>
+            </View>
             {/* <Text>categories</Text> */}
             <Text
               onPress={() => {

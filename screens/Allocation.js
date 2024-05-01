@@ -41,23 +41,32 @@ const AllocationScreen = ({ navigation }) => {
   const renderAllocationItem = ({ item }) => (
     <View style={styles.allocationItem}>
       <View>
-        <Text style={styles.text}>{`Salesman: ${item.salesman}`}</Text>
-        <Text style={styles.text}>{`Product: ${item.product}`}</Text>
+        <Text style={styles.text}>{`Salesman: ${item.salesmanId}`}</Text>
+        <Text style={styles.text}>{`Product: ${item.productId}`}</Text>
         <Text style={styles.heading}>Allocated Quantities</Text>
-        <View style={styles.quantityContainer}>
-          <Text
-            style={styles.quantity}
-          >{`Small: ${item.allocatedQuantities.small}`}</Text>
-          <Text
-            style={styles.quantity}
-          >{`Medium: ${item.allocatedQuantities.medium}`}</Text>
-          <Text
-            style={styles.quantity}
-          >{`Large: ${item.allocatedQuantities.large}`}</Text>
-          <TouchableOpacity onPress={() => handleDeleteAllocation(item._id)}>
-            <MaterialIcons name="delete-outline" size={24} color="red" />
-          </TouchableOpacity>
-        </View>
+        {item.allocations.map((allocation, index) => (
+          <View key={index}>
+            <Text style={styles.color}>{`Color: ${allocation.name}`}</Text>
+            <View style={styles.sizeContainer}>
+              {Object.keys(allocation.sizes).map((size, sizeIndex) => (
+                <View key={sizeIndex} style={styles.sizeItem}>
+                  <Text style={styles.sizeLabel}>{`${size}:`}</Text>
+                  <Text style={styles.sizeQuantity}>
+                    {allocation.sizes[size]}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        ))}
+        <TouchableOpacity onPress={() => handleDeleteAllocation(item._id)}>
+          <MaterialIcons
+            style={{ alignSelf: "flex-end" }}
+            name="delete-outline"
+            size={24}
+            color="red"
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -143,6 +152,27 @@ const styles = StyleSheet.create({
   quantity: {
     flex: 1,
     fontSize: 16,
+  },
+  sizeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 5,
+  },
+  sizeItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+    marginBottom: 5,
+  },
+  sizeLabel: {
+    fontSize: 16,
+    marginRight: 5,
+    color: colors.medium,
+  },
+  sizeQuantity: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.dark,
   },
 });
 

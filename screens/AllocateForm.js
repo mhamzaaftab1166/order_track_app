@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import * as Yup from "yup";
 import AppFormField from "../components/forms/AppFormField";
-import AppFormPicker from "../components/forms/AppFormPicker";
 import SubmitButton from "../components/forms/SubmitButton";
 import AppForm from "../components/forms/AppForm";
 import AppErrorMessage from "../components/forms/AppErrorMessage";
+import AppFormPicker from "../components/forms/AppFormPicker";
 import { getSalesmans } from "../utilty/salesmanUtility";
 import { getProducts } from "../utilty/ProductUtility";
 import { allocate } from "../utilty/allocationUtility";
+import { getSizes } from "../utilty/sizeUtility";
+import colors from "../config/colors";
 
-const validationSchema = Yup.object({
+const validationSchema = Yup.object().shape({
   salesmanId: Yup.object().required().label("Salesman ID"),
   productId: Yup.object().required().label("Product ID"),
-  small: Yup.number().required().min(0).label("Small"),
-  medium: Yup.number().required().min(0).label("Medium"),
-  large: Yup.number().required().min(0).label("Large"),
+  colors: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string().min(1).max(15).required().label("Color"),
+      sizes: Yup.object().shape({
+        xs: Yup.number().min(0).required().default(0).label("XS"),
+        s: Yup.number().min(0).required().default(0).label("S"),
+        m: Yup.number().min(0).required().default(0).label("M"),
+        l: Yup.number().min(0).required().default(0).label("L"),
+        xl: Yup.number().min(0).required().default(0).label("XL"),
+      }),
+    })
+  ),
 });
 
 function AllocateForm({ navigation }) {
@@ -23,46 +34,66 @@ function AllocateForm({ navigation }) {
   const [errorVisible, setErrorVisible] = useState(false);
   const [salesmen, setSalesmen] = useState([]);
   const [products, setProducts] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [colorFields, setColorFields] = useState([{ name: "", sizes: {} }]);
 
   useEffect(() => {
-    const fetchSalesmen = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await getSalesmans();
-        setSalesmen(data);
+        const { data: salesmenData } = await getSalesmans();
+        const { data: productsData } = await getProducts();
+        const { data: sizesData } = await getSizes();
+        setSalesmen(salesmenData);
+        setProducts(productsData);
+        setSizes(sizesData);
       } catch (error) {
-        console.error("Error fetching salesmen data:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    const fetchProducts = async () => {
-      try {
-        const { data } = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products data:", error);
-      }
-    };
-
-    fetchSalesmen();
-    fetchProducts();
+    fetchData();
   }, []);
 
+  const handleAddColorField = () => {
+    setColorFields([...colorFields, { name: "", sizes: {} }]);
+  };
+
+  const handleColorChange = (index, name) => {
+    const updatedColorFields = [...colorFields];
+    updatedColorFields[index].name = name;
+    updatedColorFields[index].sizes = sizes.reduce((acc, size) => {
+      acc[size.size] = updatedColorFields[index].sizes[size.size] || 0;
+      return acc;
+    }, {});
+    setColorFields(updatedColorFields);
+  };
+
+  const handleSizeChange = (colorIndex, sizeKey, value) => {
+    setColorFields((prevColorFields) => {
+      const updatedColorFields = [...prevColorFields];
+      updatedColorFields[colorIndex].sizes[sizeKey] = parseInt(value, 10) || 0;
+      return updatedColorFields;
+    });
+  };
+
+  const handleRemoveColorField = (index) => {
+    const updatedColorFields = [...colorFields];
+    updatedColorFields.splice(index, 1);
+    setColorFields(updatedColorFields);
+  };
+  console.log(colorFields);
   const handleSubmit = async (info) => {
-    const { salesmanId, productId, small, medium, large } = info;
+    const { salesmanId, productId } = info;
     const productAllocationData = {
       salesmanId: salesmanId.value,
       productId: productId.value,
-      allocatedQuantities: {
-        small: parseInt(small),
-        medium: parseInt(medium),
-        large: parseInt(large),
-      },
+      allocations: colorFields,
     };
     try {
-      const response = await allocate(productAllocationData); // Assuming allocate function sends the request to backend
+      console.log("Product allocation data:", productAllocationData);
+      const response = await allocate(productAllocationData);
       console.log("Allocation successful:", response.data);
       navigation.navigate("allocation");
-      // Optionally, you can navigate to another screen or perform any other action upon successful allocation
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data);
@@ -78,10 +109,8 @@ function AllocateForm({ navigation }) {
           initialValues={{
             salesmanId: "",
             productId: "",
-            small: "0",
-            medium: "0",
-            large: "0",
-          }} // Converted numbers to strings
+            colors: colorFields,
+          }}
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
@@ -91,41 +120,56 @@ function AllocateForm({ navigation }) {
               label: salesman.name,
               value: salesman._id,
             }))}
-            name={"salesmanId"}
-            placeholder={"Select Salesman"}
-            width={"98%"}
+            name="salesmanId"
+            placeholder="Select Salesman"
+            width="98%"
           />
           <AppFormPicker
             items={products.map((product) => ({
               label: product.name,
               value: product._id,
             }))}
-            name={"productId"}
-            placeholder={"Select Product"}
-            width={"98%"}
+            name="productId"
+            placeholder="Select Product"
+            width="98%"
           />
-          <AppFormField
-            name={"small"}
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholder="Small Quantity"
-            keyboardType="numeric"
-          />
-          <AppFormField
-            name={"medium"}
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholder="Medium Quantity"
-            keyboardType="numeric"
-          />
-          <AppFormField
-            name={"large"}
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholder="Large Quantity"
-            keyboardType="numeric"
-          />
-          <SubmitButton title={"Allocate"} />
+          {colorFields.map((colorField, index) => (
+            <View key={index}>
+              <AppFormField
+                name={`colors[${index}].name`}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="Color"
+                value={colorField.name}
+                onChangeText={(name) => handleColorChange(index, name)}
+              />
+              <View style={styles.sizeInputContainer}>
+                {sizes?.map((size) => (
+                  <AppFormField
+                    width={"30%"}
+                    key={size?.size}
+                    name={`colors[${index}].sizes.${size.size}`}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholder={`${size.size}`}
+                    keyboardType="numeric"
+                    onChangeText={(value) =>
+                      handleSizeChange(index, size.size, value)
+                    }
+                  />
+                ))}
+              </View>
+              <TouchableOpacity onPress={() => handleRemoveColorField(index)}>
+                <Text style={{ color: colors.danger }}>Remove Color</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+          <TouchableOpacity onPress={handleAddColorField}>
+            <Text style={{ color: colors.secondary, marginBottom: 5 }}>
+              Add Color
+            </Text>
+          </TouchableOpacity>
+          <SubmitButton title="Allocate" />
         </AppForm>
       </View>
     </View>
@@ -140,6 +184,12 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     width: "80%",
+  },
+  sizeInputContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 10,
   },
 });
 
