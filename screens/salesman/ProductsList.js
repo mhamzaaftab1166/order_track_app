@@ -1,3 +1,4 @@
+// ProductsList.js
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
@@ -63,12 +64,21 @@ const ProductsList = ({ navigation }) => {
                   <View style={styles.detailsContainer}>
                     <Text style={styles.name}>{product.name}</Text>
 
-                    <Text style={styles.color}>
-                      Colors:{" "}
-                      <Text style={styles.bold}>
-                        {product.color.join(", ")}
-                      </Text>
-                    </Text>
+                    {/* {product.colors.map((color, colorIndex) => (
+                      <View key={colorIndex}>
+                        <Text style={styles.color}>{color.name}</Text>
+                        <View style={styles.sizeContainer}>
+                          {Object.entries(color.sizes).map(
+                            ([sizeKey, sizeValue]) => (
+                              <Text key={sizeKey} style={styles.size}>
+                                {sizeKey}: {sizeValue}
+                              </Text>
+                            )
+                          )}
+                        </View>
+                      </View>
+                    ))} */}
+
                     <Text style={styles.description}>
                       {product.description}
                     </Text>
@@ -136,14 +146,21 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: colors.dark,
   },
-  size: {
-    marginBottom: 5,
-    color: colors.medium,
-  },
   bold: {
     fontWeight: "bold",
   },
   color: {
+    marginBottom: 5,
+    color: colors.medium,
+    fontWeight: "bold",
+  },
+  sizeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 5,
+  },
+  size: {
+    marginRight: 10,
     marginBottom: 5,
     color: colors.medium,
   },

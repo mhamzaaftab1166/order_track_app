@@ -12,9 +12,7 @@ import { saveSize, deleteSize, getSizes } from "../../utilty/sizeUtility";
 import { FontAwesome6 } from "@expo/vector-icons";
 
 const validationSchema = Yup.object().shape({
-  size: Yup.string()
-    .oneOf(["xs", "s", "m", "l", "xl"], "Invalid size")
-    .required("Size is required"),
+  size: Yup.string().required("Size is required"),
 });
 
 function SizeScreen({ navigation }) {
@@ -99,7 +97,7 @@ function SizeScreen({ navigation }) {
                 name={"size"}
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Select Size xs/x/m/l/xl"
+                placeholder="XS, S, M, L, XL, XXL, XXXL"
               />
               <SubmitButton title={"Submit"} />
             </AppForm>

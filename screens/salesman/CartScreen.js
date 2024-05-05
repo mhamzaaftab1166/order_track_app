@@ -17,7 +17,7 @@ import { saveOrder } from "../../utilty/orderUtility";
 const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart, setCartItems } = useCart();
   const [location, setLocation] = useState(null);
-
+  console.log(cartItems);
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <Image
@@ -67,7 +67,7 @@ const CartScreen = ({ navigation }) => {
         setCartItems([]);
         navigation.navigate("userhome");
       } catch (error) {
-        Alert.alert(error.respone.data);
+        Alert.alert(error.response.data);
       }
     } catch (error) {
       console.error("Error handling place order:", error);

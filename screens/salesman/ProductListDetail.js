@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -12,25 +12,49 @@ import colors from "../../config/colors";
 import Icon from "react-native-vector-icons/Ionicons"; // Import Ionicons
 import { useCart } from "../../CartContext";
 import { UserContext } from "../../UserContext";
+import { getSizes } from "../../utilty/sizeUtility";
+import { getAllocations } from "../../utilty/allocationUtility";
 
 const ProductListDetail = ({ route, navigation }) => {
   const { user } = useContext(UserContext);
-
   const { product } = route.params;
-  const { addToCart, cartItems } = useCart();
-  console.log(cartItems);
-  // Remove _id property from sizes
-  const sizesArray = Object.keys(product.sizes)
-    .filter((sizeName) => sizeName !== "_id")
-    .map((sizeName) => ({
-      size: sizeName,
-      quantity: product.sizes[sizeName],
-    }));
 
+  const { addToCart, cartItems } = useCart();
+  const [sizes, setSizes] = useState({});
   const [selectedSizeIndex, setSelectedSizeIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  console.log(selectedSizeIndex);
+
+  useEffect(() => {
+    const fetchSizes = async () => {
+      try {
+        const allocationsResponse = await getAllocations(user._id);
+        const allocations = allocationsResponse.data;
+
+        // Extract all available sizes from allocations where sizes are not 0
+        const availableSizes = allocations.reduce((acc, curr) => {
+          curr.allocations.forEach((allocation) => {
+            if (allocation.sizes.length !== 0) {
+              acc = { ...acc, ...allocation.sizes }; // Merge sizes object
+            }
+          });
+          return acc;
+        }, {});
+
+        setSizes(availableSizes);
+      } catch (error) {
+        console.error("Error fetching sizes:", error);
+      }
+    };
+
+    fetchSizes();
+  }, []);
+  console.log(sizes);
+  if (!product) {
+    return <Text>Loading...</Text>;
+  }
 
   const handleSizeSelect = (index) => {
     setSelectedSizeIndex(index);
@@ -51,23 +75,18 @@ const ProductListDetail = ({ route, navigation }) => {
   };
 
   const handleAddToCart = () => {
-    // Add logic to add the selected product to the cart
     addToCart({
       salesman: user._id,
       pname: product._id,
       pdepartment: product.department,
       pcategory: product.category,
-      size: sizesArray[selectedSizeIndex].size,
+      size: Object.keys(sizes)[selectedSizeIndex], // Use fetched sizes
       color: selectedColor,
       quantity,
       pimage: product.imageUrl,
-      // name: product.name,
       price: product.price * quantity,
     });
-    // Show alert
-    alert("Your Item added to cart sucessfully!");
-
-    // Navigate to the home screen
+    alert("Your Item added to cart successfully!");
     navigation.navigate("list");
   };
 
@@ -102,58 +121,66 @@ const ProductListDetail = ({ route, navigation }) => {
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.price}>Price: ${product.price}</Text>
+        <Text style={styles.price}>Price {product.price} (pkr)</Text>
         <Text style={styles.description}>{product.description}</Text>
         <View style={styles.sizesContainer}>
           <Text style={styles.sizesLabel}>Available Sizes:</Text>
           <ScrollView horizontal>
-            {sizesArray.map(({ size, quantity }, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.sizeButton,
-                  selectedSizeIndex === index && {
-                    backgroundColor: colors.primary,
-                  },
-                ]}
-                onPress={() => handleSizeSelect(index)}
-              >
-                <Text
-                  style={[
-                    styles.sizeButtonText,
-                    selectedSizeIndex === index && { color: colors.light },
-                  ]}
-                >
-                  {size}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {Object.entries(sizes).map(
+              ([size, value], index) =>
+                // Check if the size value is greater than 0
+                value > 0 && (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.sizeButton,
+                      selectedSizeIndex === index && {
+                        backgroundColor: colors.primary,
+                      },
+                    ]}
+                    onPress={() => handleSizeSelect(index)}
+                  >
+                    <Text
+                      style={[
+                        styles.sizeButtonText,
+                        selectedSizeIndex === index && {
+                          color: colors.light,
+                        },
+                      ]}
+                    >
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                )
+            )}
           </ScrollView>
         </View>
+
         <View style={styles.colorsContainer}>
           <Text style={styles.colorsLabel}>Available Colors:</Text>
           <ScrollView horizontal>
-            {product.color.map((color, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.colorButton,
-                  selectedColor === color && {
-                    backgroundColor: colors.primary,
-                  },
-                ]}
-                onPress={() => handleColorSelect(color)}
-              >
-                <Text
+            {product.colors &&
+              product.colors.map((color, index) => (
+                <TouchableOpacity
+                  key={index}
                   style={[
-                    styles.colorButtonText,
-                    selectedColor === color && { color: colors.light },
+                    styles.colorButton,
+                    selectedColor === color.name && {
+                      backgroundColor: colors.primary,
+                    },
                   ]}
+                  onPress={() => handleColorSelect(color.name)}
                 >
-                  {color}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.colorButtonText,
+                      selectedColor === color.name && { color: colors.light },
+                    ]}
+                  >
+                    {color.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
           </ScrollView>
         </View>
         <View style={styles.quantityContainer}>
@@ -204,7 +231,6 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "absolute",
     bottom: 0,
-    // backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 10,
   },
   detailsContainer: {
