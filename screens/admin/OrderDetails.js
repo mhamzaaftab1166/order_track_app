@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   View,
   Text,
@@ -12,8 +13,8 @@ import { getSaleman } from "../../utilty/salesmanUtility";
 
 const OrderDetailsScreen = ({ navigation, route }) => {
   const [salesman, setSalesman] = useState(null);
+  const [locationName, setLocationName] = useState("Loading...");
   const { order } = route.params;
-  console.log(salesman);
 
   useEffect(() => {
     const fetchSalesman = async () => {
@@ -26,11 +27,27 @@ const OrderDetailsScreen = ({ navigation, route }) => {
     };
 
     fetchSalesman();
+
+    // Fetch location name based on latitude and longitude
+    const fetchLocationName = async () => {
+      try {
+        const response = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${order.latitude}&lon=${order.longitude}`
+        );
+        setLocationName(response.data.display_name);
+      } catch (error) {
+        console.log(error);
+        setLocationName("Location Not Found");
+      }
+    };
+
+    fetchLocationName();
   }, [order.salesman]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Details</Text>
-      <Text style={styles.locationInfo}>Location Info with Date and Time</Text>
+      <Text style={styles.locationInfo}>{`${locationName}`}</Text>
 
       {/* Smaller Map */}
       <View style={styles.mapContainer}>
@@ -44,41 +61,29 @@ const OrderDetailsScreen = ({ navigation, route }) => {
           }
           style={styles.map}
           initialRegion={{
-            latitude: parseFloat(order.latitude), // Parse latitude to number
+            latitude: parseFloat(order.latitude),
             longitude: parseFloat(order.longitude),
-            latitudeDelta: 0.01, // Adjusted for closer zoom
-            longitudeDelta: 0.01, // Adjusted for closer zoom
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           }}
         >
           <Marker
             coordinate={{
-              latitude: parseFloat(order.latitude), // Parse latitude to number
-              longitude: parseFloat(order.longitude), // Parse longitude to number
+              latitude: parseFloat(order.latitude),
+              longitude: parseFloat(order.longitude),
             }}
             anchor={{ x: 0.5, y: 0.5 }}
             title="Order Location"
           />
         </MapView>
-        {/* <MapView
-         
-        
-        >
-          <Marker
-            coordinate={{
-              latitude: order.latitude,
-              longitude: order.longitude, // Corrected typo
-            }}
-            title="Order Location"
-          />
-        </MapView> */}
       </View>
 
       {/* Image Carousel */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {order.pimage.map((imgUrl, index) => (
           <Image
-            key={index} // Added key for list items
-            source={{ uri: imgUrl }} // Use the actual image URL
+            key={index}
+            source={{ uri: imgUrl }}
             style={styles.image}
             defaultSource={require("../../assets/noimage.jpg")}
           />
@@ -95,16 +100,17 @@ const OrderDetailsScreen = ({ navigation, route }) => {
       </View>
 
       <View style={styles.contactInfo}>
-        {/* Add icons for user and phone */}
         <Text style={styles.heading}>{`ORDER PLACED BY: ${
           salesman ? salesman.name : "Loading..."
         }`}</Text>
-
         <Text>{`Phone Number: ${salesman?.phone}`}</Text>
       </View>
 
-      <TouchableOpacity style={styles.detailsButton}>
-        <Text style={styles.detailsButtonText}>Back</Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("receipt", { order: order })}
+        style={styles.detailsButton}
+      >
+        <Text style={styles.detailsButtonText}>Details</Text>
       </TouchableOpacity>
     </View>
   );

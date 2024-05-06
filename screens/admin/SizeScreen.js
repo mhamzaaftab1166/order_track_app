@@ -10,6 +10,7 @@ import AppText from "../../components/AppText";
 import SafeScreen from "../../components/SafeScreen";
 import { saveSize, deleteSize, getSizes } from "../../utilty/sizeUtility";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
 
 const validationSchema = Yup.object().shape({
   size: Yup.string().required("Size is required"),
@@ -107,25 +108,27 @@ function SizeScreen({ navigation }) {
               Added Sizes
             </AppText>
           </View>
-          <View style={{ marginVertical: 20 }}>
-            {sizes.map((size, index) => (
-              <TouchableOpacity
-                onPress={() => {}}
-                key={index}
-                style={styles.departmentContainer}
-              >
-                <AppText style={styles.departmentText}>{size.size}</AppText>
-                <TouchableOpacity onPress={() => onDeleteSize(size)}>
-                  <FontAwesome6
-                    style={{ marginRight: 10 }}
-                    name="delete-left"
-                    size={24}
-                    color={colors.medium}
-                  />
+          <ScrollView>
+            <View style={{ marginVertical: 20 }}>
+              {sizes.map((size, index) => (
+                <TouchableOpacity
+                  onPress={() => {}}
+                  key={index}
+                  style={styles.departmentContainer}
+                >
+                  <AppText style={styles.departmentText}>{size.size}</AppText>
+                  <TouchableOpacity onPress={() => onDeleteSize(size)}>
+                    <FontAwesome6
+                      style={{ marginRight: 10 }}
+                      name="delete-left"
+                      size={24}
+                      color={colors.medium}
+                    />
+                  </TouchableOpacity>
                 </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
-          </View>
+              ))}
+            </View>
+          </ScrollView>
         </View>
       </View>
     </SafeScreen>

@@ -67,6 +67,7 @@ const CartScreen = ({ navigation }) => {
         setCartItems([]);
         navigation.navigate("userhome");
       } catch (error) {
+        console.log(error);
         Alert.alert(error.response.data);
       }
     } catch (error) {

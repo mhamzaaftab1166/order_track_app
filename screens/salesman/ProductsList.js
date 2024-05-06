@@ -1,5 +1,5 @@
-// ProductsList.js
-import React, { useEffect, useState } from "react";
+// Import useState and TextInput
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,21 +7,47 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TextInput, // Add this import
 } from "react-native";
 import colors from "../../config/colors";
 import { getProducts, deleteProduct } from "../../utilty/ProductUtility";
 import SafeScreen from "../../components/SafeScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../../components/AppText";
+import { getAllocations } from "../../utilty/allocationUtility";
+import { UserContext } from "../../UserContext";
 
 const ProductsList = ({ navigation }) => {
+  const { user } = useContext(UserContext);
   const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProducts();
-        setProducts(response.data); // Assuming response.data is an array of products
+        const allProducts = response.data; // Assuming response.data is an array of products
+
+        // Fetch allocations for the current user
+        const allocationsResponse = await getAllocations(user._id);
+        const allocations = allocationsResponse.data;
+
+        // Filter products based on allocations
+        const filteredProducts = allProducts.filter((product) => {
+          // Check if there are allocations for this product
+          const allocation = allocations.find(
+            (allocation) => allocation.productId._id === product._id
+          );
+
+          if (!allocation) {
+            return false; // Exclude products without allocations
+          }
+
+          // Check if the salesmanId in allocations matches the user's _id
+          return allocation.salesmanId._id === user._id;
+        });
+
+        setProducts(filteredProducts);
       } catch (error) {
         console.error(error);
       }
@@ -34,6 +60,11 @@ const ProductsList = ({ navigation }) => {
     navigation.navigate("listdetail", { product });
   };
 
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <SafeScreen>
       <ScrollView>
@@ -44,12 +75,22 @@ const ProductsList = ({ navigation }) => {
               List of all industry products
             </AppText>
           </View>
-          {products.length === 0 ? (
+          {/* Search input */}
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by product name"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          {/* Render filtered products */}
+          {filteredProducts.length === 0 ? (
             <View style={styles.loadingContainer}>
               <Text>No Products!</Text>
             </View>
           ) : (
-            products.map((product, index) => (
+            filteredProducts.map((product, index) => (
               <TouchableOpacity
                 onPress={() => handleProductPress(product)}
                 style={styles.productContainer}
@@ -95,6 +136,8 @@ const ProductsList = ({ navigation }) => {
     </SafeScreen>
   );
 };
+
+// Styles...
 
 const styles = StyleSheet.create({
   container: {
@@ -178,6 +221,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.danger,
     marginLeft: 10,
+  },
+  // Search input styles
+  searchContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    width: "100%",
+  },
+  searchInput: {
+    borderWidth: 1,
+
+    borderColor: colors.medium,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: colors.white,
   },
 });
 

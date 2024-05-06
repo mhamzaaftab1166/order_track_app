@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from "react-native";
 import colors from "../config/colors";
 import { getProducts, deleteProduct } from "../utilty/ProductUtility";
@@ -16,6 +17,7 @@ import AppText from "../components/AppText";
 const AddedProducts = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [isListView, setIsListView] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,6 +44,10 @@ const AddedProducts = ({ navigation }) => {
     }
   };
 
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <SafeScreen>
       <ScrollView>
@@ -67,11 +73,19 @@ const AddedProducts = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search by product name"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
         <View style={styles.container}>
-          {products.length === 0 ? (
+          {filteredProducts.length === 0 ? (
             <Text>No Products!</Text>
           ) : isListView ? (
-            products.map((product, index) => (
+            filteredProducts.map((product, index) => (
               <View style={styles.listItemContainer} key={index}>
                 <Image
                   source={{ uri: product.imageUrl[0] }}
@@ -98,7 +112,7 @@ const AddedProducts = ({ navigation }) => {
               </View>
             ))
           ) : (
-            products.map((product, index) => (
+            filteredProducts.map((product, index) => (
               <TouchableOpacity
                 onPress={() => navigation.navigate("addproduct", { product })}
                 style={styles.productContainer}
@@ -174,6 +188,18 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: colors.medium,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,

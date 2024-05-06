@@ -10,6 +10,7 @@ import "react-native-gesture-handler";
 import React, { useCallback, useEffect, useState } from "react";
 import salesmanAuthService from "./utilty/salesmanAuthService";
 import { UserContext } from "./UserContext";
+import OfflineNotice from "./components/OfflineNotice";
 
 export default function App() {
   const [user, setUser] = useState();
@@ -44,6 +45,7 @@ export default function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
+      <OfflineNotice />
       <NavigationContainer onReady={onNavigationContainerReady}>
         {user && !user.role ? (
           <CartProvider>
