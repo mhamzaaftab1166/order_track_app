@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,7 +17,33 @@ import { saveOrder } from "../../utilty/orderUtility";
 const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart, setCartItems } = useCart();
   const [location, setLocation] = useState(null);
-  console.log(cartItems);
+  const [isPlaceOrderEnabled, setIsPlaceOrderEnabled] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true); // Added
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission Denied",
+            "Location permission is required to place an order."
+          );
+          return;
+        }
+
+        let userLocation = await Location.getCurrentPositionAsync({});
+        setLocation(userLocation);
+        setIsPlaceOrderEnabled(true);
+      } catch (error) {
+        console.error("Error getting location:", error);
+      } finally {
+        setIsFetchingLocation(false); // Set loading to false after fetching location
+      }
+    };
+
+    fetchLocation();
+  }, []);
+
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <Image
@@ -42,34 +68,25 @@ const CartScreen = ({ navigation }) => {
 
   const handlePlaceOrder = async () => {
     try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
+      if (!location) {
         Alert.alert(
-          "Permission Denied",
-          "Location permission is required to place an order."
+          "Location Not Available",
+          "Please wait while we fetch your current location."
         );
         return;
       }
 
-      let userLocation = await Location.getCurrentPositionAsync({});
-      setLocation(userLocation);
-
       // Map through cartItems array to construct an array of order objects
       const orderData = cartItems.map((item) => ({
         ...item,
-        longitude: userLocation.coords.longitude,
-        latitude: userLocation.coords.latitude,
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
       }));
 
-      try {
-        await saveOrder(orderData);
-        console.log("done");
-        setCartItems([]);
-        navigation.navigate("userhome");
-      } catch (error) {
-        console.log(error);
-        Alert.alert(error.response.data);
-      }
+      await saveOrder(orderData);
+      console.log("done");
+      setCartItems([]);
+      navigation.navigate("userhome");
     } catch (error) {
       console.error("Error handling place order:", error);
       Alert.alert("Error", "Could not place order. Please try again later.");
@@ -94,12 +111,19 @@ const CartScreen = ({ navigation }) => {
         />
       )}
       <View style={styles.buttonContainer}>
+        {cartItems.length > 0 && isFetchingLocation && (
+          <Text style={{ marginVertical: 10, color: colors.danger }}>
+            please wait to place order, we are fetching your location
+          </Text>
+        )}
         <TouchableOpacity
           style={[
             styles.placeOrderButton,
-            { opacity: cartItems.length === 0 ? 0.5 : 1 },
+            {
+              opacity: cartItems.length === 0 || !isPlaceOrderEnabled ? 0.5 : 1,
+            },
           ]}
-          disabled={cartItems.length === 0}
+          disabled={cartItems.length === 0 || !isPlaceOrderEnabled}
           onPress={handlePlaceOrder}
         >
           <Text style={styles.placeOrderText}>Place Order</Text>
@@ -164,6 +188,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   noItemText: {
+    textAlign: "center",
+    fontSize: 16,
+    marginBottom: 20,
+  },
+
+  loadingText: {
+    // Added styles for loading text
     textAlign: "center",
     fontSize: 16,
     marginBottom: 20,
