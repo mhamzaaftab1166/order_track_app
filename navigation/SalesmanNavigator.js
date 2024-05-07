@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import ProductsList from "../screens/salesman/ProductsList";
 import ProductListDetail from "../screens/salesman/ProductListDetail";
 import CartScreen from "../screens/salesman/CartScreen";
+import History from "../screens/salesman/history";
 
 const SalesmanNavigator = () => {
   return (
@@ -19,6 +20,7 @@ const SalesmanNavigator = () => {
       <Stack.Screen name="list" component={ProductsList} />
       <Stack.Screen name="cart" component={CartScreen} />
       <Stack.Screen name="listdetail" component={ProductListDetail} />
+      <Stack.Screen name="history" component={History} />
     </Stack.Navigator>
   );
 };

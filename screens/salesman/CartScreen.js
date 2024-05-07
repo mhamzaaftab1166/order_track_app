@@ -13,12 +13,16 @@ import colors from "../../config/colors";
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as Location from "expo-location";
 import { saveOrder } from "../../utilty/orderUtility";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart, setCartItems } = useCart();
   const [location, setLocation] = useState(null);
   const [isPlaceOrderEnabled, setIsPlaceOrderEnabled] = useState(false);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(true); // Added
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+  const [offlineOrders, setOfflineOrders] = useState([]);
+
   useEffect(() => {
     const fetchLocation = async () => {
       try {
@@ -37,12 +41,25 @@ const CartScreen = ({ navigation }) => {
       } catch (error) {
         console.error("Error getting location:", error);
       } finally {
-        setIsFetchingLocation(false); // Set loading to false after fetching location
+        setIsFetchingLocation(false);
       }
     };
 
     fetchLocation();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(async (state) => {
+      if (state.isConnected && offlineOrders.length > 0) {
+        // If online and there are offline orders, place them
+        await placeOfflineOrders();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [offlineOrders]);
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
@@ -76,20 +93,61 @@ const CartScreen = ({ navigation }) => {
         return;
       }
 
-      // Map through cartItems array to construct an array of order objects
       const orderData = cartItems.map((item) => ({
         ...item,
         longitude: location.coords.longitude,
         latitude: location.coords.latitude,
       }));
 
-      await saveOrder(orderData);
-      console.log("done");
-      setCartItems([]);
-      navigation.navigate("userhome");
+      const isConnected = await NetInfo.fetch().then(
+        (state) => state.isConnected
+      );
+
+      if (isConnected) {
+        await saveOrder(orderData);
+        console.log("done");
+        setCartItems([]);
+        navigation.navigate("userhome");
+      } else {
+        await storeOfflineOrder(orderData);
+        Alert.alert(
+          "Offline Order Stored",
+          "Order will be placed when the internet connection is available."
+        );
+      }
     } catch (error) {
       console.error("Error handling place order:", error);
       Alert.alert("Error", "Could not place order. Please try again later.");
+    }
+  };
+
+  const storeOfflineOrder = async (orderData) => {
+    try {
+      const existingOrders = await AsyncStorage.getItem("offlineOrders");
+      const orders = existingOrders ? JSON.parse(existingOrders) : [];
+      orders.push(orderData);
+      await AsyncStorage.setItem("offlineOrders", JSON.stringify(orders));
+      console.log("Stored offline order:", orderData); // Add this log statement
+    } catch (error) {
+      console.error("Error storing offline order:", error);
+    }
+  };
+
+  const placeOfflineOrders = async () => {
+    try {
+      const existingOrders = await AsyncStorage.getItem("offlineOrders");
+      console.log("Existing offline orders:", existingOrders); // Add this log statement
+      if (existingOrders) {
+        const orders = JSON.parse(existingOrders);
+        for (const order of orders) {
+          await saveOrder(order);
+          console.log("Placed offline order:", order); // Add this log statement
+        }
+        await AsyncStorage.removeItem("offlineOrders");
+        setOfflineOrders([]);
+      }
+    } catch (error) {
+      console.error("Error placing offline orders:", error);
     }
   };
 
@@ -113,7 +171,7 @@ const CartScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         {cartItems.length > 0 && isFetchingLocation && (
           <Text style={{ marginVertical: 10, color: colors.danger }}>
-            please wait to place order, we are fetching your location
+            Please wait to place order, we are fetching your location.
           </Text>
         )}
         <TouchableOpacity
@@ -194,7 +252,6 @@ const styles = StyleSheet.create({
   },
 
   loadingText: {
-    // Added styles for loading text
     textAlign: "center",
     fontSize: 16,
     marginBottom: 20,

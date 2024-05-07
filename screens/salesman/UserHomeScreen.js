@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "../../config/colors";
 import AppText from "../../components/AppText";
@@ -14,6 +14,8 @@ const screenWidth = Dimensions.get("window").width * 0.8;
 import { FontAwesome5 } from "@expo/vector-icons";
 import { UserContext } from "../../UserContext";
 import salesmanAuthService from "../../utilty/salesmanAuthService";
+import { getOrders } from "../../utilty/orderUtility";
+import { getAllocations } from "../../utilty/allocationUtility";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -36,6 +38,45 @@ const data = {
 
 const UserHomeScreen = ({ navigation }) => {
   const { user, setUser } = useContext(UserContext);
+  const [orders, setOrders] = useState([]);
+  const [allocations, setAllocations] = useState([]);
+  const [sales, setSales] = useState(0);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const allOrders = await getOrders();
+        const filteredOrders = allOrders.data.filter(
+          (order) => order.salesman === user._id
+        );
+        setOrders(filteredOrders);
+        const totalSales = filteredOrders.reduce(
+          (acc, order) => acc + order.price,
+          0
+        );
+        setSales(totalSales);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    const fetchAllocations = async () => {
+      try {
+        const allAllocations = await getAllocations();
+
+        const filteredAllocations = allAllocations.data.filter(
+          (allocation) => allocation.salesmanId._id === user._id
+        );
+
+        setAllocations(filteredAllocations);
+      } catch (error) {
+        console.error("Error fetching allocations:", error);
+      }
+    };
+
+    fetchOrders();
+    fetchAllocations();
+  }, [user._id]);
 
   const handleSettingsPress = () => {
     // Handle settings press logic here
@@ -80,7 +121,7 @@ const UserHomeScreen = ({ navigation }) => {
       >
         <View>
           <AppText style={{ fontWeight: "bold" }}>Total Sales(pkr)</AppText>
-          <AppText style={{ color: colors.medium }}>20000</AppText>
+          <AppText style={{ color: colors.medium }}>{sales}</AppText>
         </View>
         <Octicons
           name="graph"
@@ -107,7 +148,7 @@ const UserHomeScreen = ({ navigation }) => {
             <AppText
               style={{ color: colors.black, fontWeight: "bold", fontSize: 24 }}
             >
-              10069
+              {orders.length}
             </AppText>
           </View>
           <Fontisto
@@ -142,7 +183,7 @@ const UserHomeScreen = ({ navigation }) => {
             <AppText
               style={{ color: colors.black, fontWeight: "bold", fontSize: 24 }}
             >
-              6
+              {allocations.length}
             </AppText>
           </View>
           <Entypo
@@ -156,7 +197,8 @@ const UserHomeScreen = ({ navigation }) => {
       <View
         style={{ flexDirection: "row", marginVertical: 10, marginBottom: 18 }}
       >
-        <View
+        <TouchableOpacity
+          onPress={() => navigation.navigate("history", orders)}
           style={{
             backgroundColor: colors.white,
             width: "40%",
@@ -179,7 +221,7 @@ const UserHomeScreen = ({ navigation }) => {
             size={40}
             color="#46EB8E"
           />
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("list")}
           style={{
