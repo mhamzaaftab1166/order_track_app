@@ -141,13 +141,16 @@ const CartScreen = ({ navigation }) => {
         const orders = JSON.parse(existingOrders);
         for (const order of orders) {
           await saveOrder(order);
-          console.log("Placed offline order:", order); // Add this log statement
+          console.log("Placed offline order:", order);
+          // Add this log statement
         }
         await AsyncStorage.removeItem("offlineOrders");
         setOfflineOrders([]);
+        navigation.navigate("done");
       }
     } catch (error) {
       console.error("Error placing offline orders:", error);
+      navigation.navigate("fail");
     }
   };
 
