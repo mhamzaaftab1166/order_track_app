@@ -7,6 +7,8 @@ import ProductsList from "../screens/salesman/ProductsList";
 import ProductListDetail from "../screens/salesman/ProductListDetail";
 import CartScreen from "../screens/salesman/CartScreen";
 import History from "../screens/salesman/history";
+import OrderPlaced from "../screens/salesman/OrderPlaced";
+import OrderNotPlaced from "../screens/salesman/OrderNotPlaced";
 
 const SalesmanNavigator = () => {
   return (
@@ -21,6 +23,8 @@ const SalesmanNavigator = () => {
       <Stack.Screen name="cart" component={CartScreen} />
       <Stack.Screen name="listdetail" component={ProductListDetail} />
       <Stack.Screen name="history" component={History} />
+      <Stack.Screen name="done" component={OrderPlaced} />
+      <Stack.Screen name="fail" component={OrderNotPlaced} />
     </Stack.Navigator>
   );
 };

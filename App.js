@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import salesmanAuthService from "./utilty/salesmanAuthService";
 import { UserContext } from "./UserContext";
 import OfflineNotice from "./components/OfflineNotice";
+import OrderPlaced from "./screens/salesman/OrderPlaced";
+import OrderNotPlaced from "./screens/salesman/OrderNotPlaced";
 
 export default function App() {
   const [user, setUser] = useState();

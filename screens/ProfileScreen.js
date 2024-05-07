@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -20,6 +20,7 @@ import adminAuth from "../utilty/adminAuth";
 import { UserContext } from "../UserContext";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { getOrders } from "../utilty/orderUtility";
 
 const chartConfig = {
   backgroundGradientFrom: colors.danger,
@@ -40,7 +41,29 @@ const data = {
   ],
 };
 const ProfileScreen = ({ navigation }) => {
+  const [orders, setOrders] = useState([]);
+  const [sales, setSales] = useState(0);
+
   const { user, setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const fetchedOrders = await getOrders();
+        setOrders(fetchedOrders.data);
+        const totalSales = fetchedOrders.data.reduce(
+          (acc, order) => acc + order.price,
+          0
+        );
+        setSales(totalSales);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   return (
     <SafeScreen style={styles.background}>
       <ScrollView>
@@ -58,7 +81,9 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.row}>
               <TouchableOpacity
-                onPress={() => navigation.navigate("dashboard")}
+                onPress={() =>
+                  navigation.navigate("dashboard", { sales, orders })
+                }
                 style={{
                   backgroundColor: "#fc5c65",
                   width: 170,
@@ -70,11 +95,11 @@ const ProfileScreen = ({ navigation }) => {
               >
                 <View>
                   <Text style={styles.text1}>Total Orders</Text>
-                  <Text style={styles.text2}>10069</Text>
+                  <Text style={styles.text2}>{orders.length}</Text>
                 </View>
                 <View>
                   <Text style={styles.text1}>Total Saless</Text>
-                  <Text style={styles.text2}>10069</Text>
+                  <Text style={styles.text2}>{sales.toFixed(2)}</Text>
                 </View>
                 <View
                   style={{

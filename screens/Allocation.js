@@ -41,8 +41,8 @@ const AllocationScreen = ({ navigation }) => {
   const renderAllocationItem = ({ item }) => (
     <View style={styles.allocationItem}>
       <View>
-        <Text style={styles.text}>{`Salesman: ${item.salesmanId}`}</Text>
-        <Text style={styles.text}>{`Product: ${item.productId}`}</Text>
+        <Text style={styles.text}>{`Salesman: ${item.salesmanId.name}`}</Text>
+        <Text style={styles.text}>{`Product: ${item.productId.name}`}</Text>
         <Text style={styles.heading}>Allocated Quantities</Text>
         {item.allocations.map((allocation, index) => (
           <View key={index}>

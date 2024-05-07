@@ -15,6 +15,7 @@ import * as Location from "expo-location";
 import { saveOrder } from "../../utilty/orderUtility";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import { getProduct } from "../../utilty/ProductUtility";
 
 const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart, setCartItems } = useCart();
@@ -107,7 +108,7 @@ const CartScreen = ({ navigation }) => {
         await saveOrder(orderData);
         console.log("done");
         setCartItems([]);
-        navigation.navigate("userhome");
+        navigation.navigate("done");
       } else {
         await storeOfflineOrder(orderData);
         Alert.alert(
@@ -116,8 +117,7 @@ const CartScreen = ({ navigation }) => {
         );
       }
     } catch (error) {
-      console.error("Error handling place order:", error);
-      Alert.alert("Error", "Could not place order. Please try again later.");
+      navigation.navigate("fail", error.response?.data);
     }
   };
 
