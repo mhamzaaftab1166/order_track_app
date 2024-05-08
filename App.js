@@ -47,10 +47,10 @@ export default function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <OfflineNotice />
       <NavigationContainer onReady={onNavigationContainerReady}>
         {user && !user.role ? (
           <CartProvider>
+            <OfflineNotice />
             <SalesmanNavigator />
           </CartProvider>
         ) : user && user.role === "admin" ? (
